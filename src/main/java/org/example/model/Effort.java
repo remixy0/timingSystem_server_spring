@@ -11,14 +11,23 @@ import java.util.List;
 public class Effort {
     String name, surname;
     int Id;
+    String distance;
     List<Double>  lapTimes;
     Double totalTime;
 
-    public Effort(String name, String surname, int Id, List<Double> lapTimes, Double totalTime) {
+    public Effort(String name, String surname,String distance,List<Double> lapTimes, Double totalTime) {
         this.name = name;
         this.surname = surname;
-        this.Id = Id;
+        this.distance = distance;
         this.lapTimes = lapTimes;
         this.totalTime = totalTime;
+    }
+
+    public String getLapTimes(){
+        String lapTimesString = "";
+        for(Double lapTime: lapTimes){
+            lapTimesString = lapTimesString +  "  " + lapTime;
+        }
+        return lapTimesString;
     }
 }

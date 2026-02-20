@@ -12,4 +12,12 @@ public class Repository {
         this.efforts = new ArrayList<>();
     }
 
+    public List<Effort> getEfforts() {
+        return efforts;
+    }
+
+    public void addEffort(Effort effort) {
+        efforts.add(effort);
+    }
+
 }

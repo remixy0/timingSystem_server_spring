@@ -17,7 +17,7 @@ public class BackendController {
     public String getEfforts(Model model) {
         var allEfforts = service.getEfforts();
         model.addAttribute("efforts", allEfforts);
-        return "efforts-html.html";
+        return "dashboard2.html";
     }
 
 //    @GetMapping("/efforts2")

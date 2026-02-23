@@ -1,6 +1,7 @@
 package org.example.controller;
 
 
+import com.fasterxml.jackson.databind.JsonNode;
 import lombok.Getter;
 import org.example.model.Effort;
 import org.example.service.Service;
@@ -20,21 +21,16 @@ public class BackendController {
         return "dashboard2.html";
     }
 
-//    @GetMapping("/efforts2")
-//    public String getEfforts2(Model model) {
-//        var allEfforts = service.getEfforts();
-//        model.addAttribute("efforts", allEfforts);
-//        return "efforts-html.html";
-//    }
-
 
 
     @ResponseBody
-    @PostMapping("/effort")
+    @PostMapping("/effort-debug")
     public String addNewEffort(@RequestBody Effort effort) {
         service.addEffort(effort);
         return "added new effort";
     }
+
+
 
 
     @GetMapping("/effort2")

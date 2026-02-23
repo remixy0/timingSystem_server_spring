@@ -5,26 +5,38 @@ import lombok.Setter;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.UUID;
 
 @Getter
 @Setter
 public class Effort {
-    String name, surname;
-    int Id;
+
+    UUID Id;
+    String athlete;
     String distance;
-    List<Double>  lapTimes;
     Double totalTime;
+    List<Double>  lapTimes;
     int distanceInMeters;
     LocalDate date;
 
-    public Effort(String name, String surname,String distance,List<Double> lapTimes, Double totalTime) {
-        this.name = name;
-        this.surname = surname;
+
+
+
+    public Effort(String athlete, String distance,Double totalTime, List<Double> lapTimes,int distanceInMeters) {
+        this.Id = UUID.randomUUID();
+        this.athlete = athlete;
         this.distance = distance;
-        this.lapTimes = lapTimes;
+        if(lapTimes == null){
+            this.lapTimes = new ArrayList<>();
+            this.lapTimes.add(totalTime);
+        }else{
+            this.lapTimes = lapTimes;
+        }
         this.totalTime = totalTime;
-        date = LocalDate.now();
+        this.distanceInMeters = distanceInMeters;
+        this.date = LocalDate.now();
     }
 
     private int distanceInMeters(){

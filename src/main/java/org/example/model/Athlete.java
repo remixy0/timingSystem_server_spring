@@ -23,6 +23,10 @@ public class Athlete {
         this.listOfEffortsId.add(effortId);
     }
 
+    public UUID getId() {
+        return id;
+    }
+
     public List<UUID> getEffortsId() {
         return this.listOfEffortsId;
     }

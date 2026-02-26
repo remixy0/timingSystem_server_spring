@@ -3,6 +3,7 @@ package org.example.controller;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import lombok.Getter;
+import org.example.model.Athlete;
 import org.example.model.Effort;
 import org.example.service.Service;
 import org.springframework.http.MediaType;
@@ -57,15 +58,20 @@ public class BackendController {
         return "added new effort";
     }
 
+    @ResponseBody
+    @PostMapping("/athlete")
+    public String addNewAthlete(@RequestBody Athlete athlete) {
+        service.addAthlete(athlete);
 
-
-
-    @GetMapping("/effort2")
-    public String addEffort(Model model) {
-        return "add-effort.html";
+        for (SseEmitter emitter : emitters) {
+            try {
+                emitter.send("ODSWIEZ");
+            } catch (IOException e) {
+                emitters.remove(emitter);
+            }
+        }
+        return "added new athlete";
     }
-
-
 
 }
 

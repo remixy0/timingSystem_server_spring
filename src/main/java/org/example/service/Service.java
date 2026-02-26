@@ -21,6 +21,12 @@ public class Service {
 
     public void addEffort(Effort effort) {
         repository.addEffort(effort);
+        Athlete athlete = (Athlete) repository.getAthletes().stream().filter(x -> x.getId().equals(effort.getAthlete()));
+        athlete.addEffort(effort.getId());
+    }
+
+    public void addAthlete(Athlete athlete) {
+        repository.addAthlete(athlete);
     }
 
     public List<Effort> getEffortsByAthlete(Athlete athlete) {

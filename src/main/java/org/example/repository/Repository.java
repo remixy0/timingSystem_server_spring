@@ -19,8 +19,16 @@ public class Repository {
         return efforts;
     }
 
+    public List<Effort> getAthletes() {
+        return athletes;
+    }
+
     public void addEffort(Effort effort) {
         efforts.add(effort);
+    }
+
+    public void addAthlete(Athlete athlete) {
+        athletes.add(athlete);
     }
 
 }

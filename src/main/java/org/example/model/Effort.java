@@ -8,16 +8,16 @@ import java.util.UUID;
 public class Effort {
 
     UUID Id;
-    String athlete;
+    UUID athlete;
     String distance;
     Double totalTime;
     List<Double>  lapTimes;
     int distanceInMeters;
     LocalDate date;
 
-    public Effort(String athlete, String distance,Double totalTime, List<Double> lapTimes,int distanceInMeters) {
-        this.Id = UUID.randomUUID();
-        this.athlete = athlete;
+    public Effort(String Id,String athleteId, String distance,Double totalTime, List<Double> lapTimes,int distanceInMeters) {
+        this.Id = UUID.fromString(Id);
+        this.athlete = UUID.fromString(athleteId);
         this.distance = distance;
         this.totalTime = totalTime;
         if(lapTimes == null){
@@ -42,16 +42,20 @@ public class Effort {
         return Integer.parseInt(var);
     }
 
+    public UUID getId() {
+        return Id;
+    }
+
+    public UUID getAthlete() {
+        return athlete;
+    }
+
     public List<Double> getLapTimes(){
         return lapTimes;
     }
 
     public String getDate(){
         return date.toString();
-    }
-
-    public String getAthlete() {
-        return athlete;
     }
 
     public String getDistance() {

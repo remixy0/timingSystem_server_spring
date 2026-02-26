@@ -208,12 +208,13 @@
 </head>
 <body>
 
-<div class="dashboard-container" th:each="effort : ${efforts}">
+
+<div class="dashboard-container" th:fragment="effortsList" th:each="effort : ${efforts}" >
 
     <div class="summary-header" onclick="toggleDetails(this)">
         <div class="summary-info">
             <p>Athlete</p>
-            <h1 th:text="${effort.athlete}">Imię Nazwisko</h1>
+            <h1 th:text="${effort.getAthlete()}">Imię Nazwisko</h1>
         </div>
 
         <div>
@@ -222,11 +223,11 @@
         <div class="summary-quick-stats">
             <div>
                 <span class="quick-stat-label">Distance</span>
-                <span class="quick-stat-value" th:text="${effort.distance}">0m</span>
+                <span class="quick-stat-value" th:text="${effort.getDistance()}">0m</span>
             </div>
             <div>
                 <span class="quick-stat-label">Total Time</span>
-                <span class="quick-stat-value" th:text="${effort.totalTime} + 's'">0.0s</span>
+                <span class="quick-stat-value" th:text="${effort.getTotalTime()} + 's'">0.0s</span>
             </div>
             <div class="expand-icon">▼</div>
         </div>
@@ -256,7 +257,7 @@
         <div class="laps-section">
             <h2>Laps</h2>
 
-            <div th:each="lap, iterStat : ${effort.lapTimes}"
+            <div th:each="lap, iterStat : ${effort.getLapTimes()}"
                  class="lap-item"
                  th:classappend="${lap == effort.getFastestLap()} ? 'best-lap' : (${lap == effort.getSlowestLap()} ? 'worst-lap' : '')">
 
@@ -276,6 +277,7 @@
             </div>
         </div>
 
+
     </div> </div> <script>
     function toggleDetails(element) {
         // Znajdź główny kontener (.dashboard-container)
@@ -284,6 +286,23 @@
         // Przełącz klasę 'open' (jeśli jej nie ma to dodaj, jeśli jest to usuń)
         container.classList.toggle('open');
     }
+</script>
+
+<script>
+    const eventSource = new EventSource('/efforts');
+
+ eventSource.onmessage = function(event) {
+     if (event.data === "ODSWIEZ") {
+         console.log("Pojawiły się nowe dane! Odświeżam całą stronę...");
+
+         // Ta jedna linijka robi dokładnie to samo, co kliknięcie "Odśwież" w przeglądarce
+         window.location.reload();
+     }
+ };
+
+ eventSource.onerror = function(error) {
+     console.log("Utracono połączenie. Przeglądarka spróbuje ponownie...");
+ };
 </script>
 
 </body>

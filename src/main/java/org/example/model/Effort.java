@@ -1,16 +1,10 @@
 package org.example.model;
 
-import lombok.Getter;
-import lombok.Setter;
-
 import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
-@Getter
-@Setter
 public class Effort {
 
     UUID Id;
@@ -21,22 +15,20 @@ public class Effort {
     int distanceInMeters;
     LocalDate date;
 
-
-
-
     public Effort(String athlete, String distance,Double totalTime, List<Double> lapTimes,int distanceInMeters) {
         this.Id = UUID.randomUUID();
         this.athlete = athlete;
         this.distance = distance;
+        this.totalTime = totalTime;
         if(lapTimes == null){
             this.lapTimes = new ArrayList<>();
             this.lapTimes.add(totalTime);
         }else{
             this.lapTimes = lapTimes;
         }
-        this.totalTime = totalTime;
         this.distanceInMeters = distanceInMeters;
         this.date = LocalDate.now();
+        System.out.println(athlete + " " + distance + " " + totalTime + " " + lapTimes + " " + distanceInMeters);
     }
 
     private int distanceInMeters(){
@@ -58,14 +50,17 @@ public class Effort {
         return date.toString();
     }
 
+    public String getAthlete() {
+        return athlete;
+    }
 
-//    public String getLapTimes(){
-//        String lapTimesString = "";
-//        for(Double lapTime: lapTimes){
-//            lapTimesString = lapTimesString +  "  " + lapTime;
-//        }
-//        return lapTimesString;
-//    }
+    public String getDistance() {
+        return distance;
+    }
+
+    public Double getTotalTime() {
+        return totalTime;
+    }
 
     public Double getAverageLapTime(){
         var number = (double) Math.round(lapTimes.stream().mapToDouble(Double::doubleValue).average().orElse(0.0) * 100);

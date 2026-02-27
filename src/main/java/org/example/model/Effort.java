@@ -1,5 +1,8 @@
 package org.example.model;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -7,17 +10,19 @@ import java.util.UUID;
 
 public class Effort {
 
-    UUID Id;
-    UUID athlete;
+    UUID id;
+    UUID athleteId;
     String distance;
     Double totalTime;
     List<Double>  lapTimes;
     int distanceInMeters;
     LocalDate date;
 
-    public Effort(String Id,String athleteId, String distance,Double totalTime, List<Double> lapTimes,int distanceInMeters) {
-        this.Id = UUID.fromString(Id);
-        this.athlete = UUID.fromString(athleteId);
+
+
+    public Effort(UUID id,String athleteId, String distance,Double totalTime, List<Double> lapTimes,int distanceInMeters) {
+        this.id = id;
+        this.athleteId = UUID.fromString(athleteId);
         this.distance = distance;
         this.totalTime = totalTime;
         if(lapTimes == null){
@@ -28,8 +33,8 @@ public class Effort {
         }
         this.distanceInMeters = distanceInMeters;
         this.date = LocalDate.now();
-        System.out.println(athlete + " " + distance + " " + totalTime + " " + lapTimes + " " + distanceInMeters);
     }
+
 
     private int distanceInMeters(){
         String var = "";
@@ -43,11 +48,11 @@ public class Effort {
     }
 
     public UUID getId() {
-        return Id;
+        return id;
     }
 
-    public UUID getAthlete() {
-        return athlete;
+    public UUID getAthleteId() {
+        return athleteId;
     }
 
     public List<Double> getLapTimes(){

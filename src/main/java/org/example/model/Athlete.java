@@ -5,6 +5,7 @@ import org.example.repository.Repository;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 public class Athlete {
     UUID id;
@@ -12,11 +13,13 @@ public class Athlete {
     String surname;
     List<UUID> listOfEffortsId;
 
-    public Athlete(String id, String name, String surname, List<UUID> listOfEffortsId) {
-        this.id = UUID.fromString(id);
+    public Athlete(UUID id, String name, String surname, List<String> listOfEffortsId) {
+        this.id = id;
         this.name = name;
         this.surname = surname;
-        this.listOfEffortsId = listOfEffortsId;
+        this.listOfEffortsId = listOfEffortsId.stream()
+                .map(UUID::fromString)
+                .collect(Collectors.toCollection(ArrayList::new));
     }
 
     public void addEffort(UUID effortId){
@@ -31,4 +34,7 @@ public class Athlete {
         return this.listOfEffortsId;
     }
 
+    public String getFullName() {
+        return this.surname + " " + this.name;
+    }
 }

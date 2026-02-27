@@ -2,6 +2,7 @@ package org.example.service;
 
 import org.example.model.Athlete;
 import org.example.model.Effort;
+import org.example.model.DTOs.EffortDTO;
 import org.example.repository.Repository;
 
 import java.util.ArrayList;
@@ -15,18 +16,35 @@ public class Service {
         this.repository = new Repository();
     }
 
-    public List<Effort> getEfforts() {
-        return this.repository.getEfforts();
+    public List<EffortDTO> getEffortsDTO() {
+        List<EffortDTO> listOfEffortsDTO = new ArrayList<>();
+        for (Effort effort : this.repository.getEfforts()) {
+            listOfEffortsDTO.add(new EffortDTO(
+                    repository.getAthleteById(effort.getAthleteId()).getFullName(),
+                    effort.getDate(),
+                    effort.getDistance(),
+                    effort.getTotalTime(),
+                    effort.calculateSpeed().toString(),
+                    effort.getAverageLapTime().toString(),
+                    effort.getLapTimes()));
+        }
+        return listOfEffortsDTO;
     }
 
     public void addEffort(Effort effort) {
-        repository.addEffort(effort);
-        Athlete athlete = (Athlete) repository.getAthletes().stream().filter(x -> x.getId().equals(effort.getAthlete()));
-        athlete.addEffort(effort.getId());
+        if (effort != null && repository.getEffortById(effort.getId()) == null) {
+            repository.addEffort(effort);
+            Athlete athlete = repository.getAthleteById(effort.getAthleteId());
+            if (athlete != null) {
+                athlete.addEffort(effort.getId());
+            }
+        }
     }
 
     public void addAthlete(Athlete athlete) {
-        repository.addAthlete(athlete);
+        if (athlete != null && repository.getAthleteById(athlete.getId()) == null) {
+            repository.addAthlete(athlete);
+        }
     }
 
     public List<Effort> getEffortsByAthlete(Athlete athlete) {
@@ -36,6 +54,11 @@ public class Service {
         }
         return listOfEfforts;
     }
+
+    public List<Athlete> getAthletes(){
+        return repository.getAthletes();
+    }
+
 
 
 }

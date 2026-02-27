@@ -1,7 +1,4 @@
 package org.example.model;
-
-import org.example.repository.Repository;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;

@@ -1,11 +1,10 @@
 package org.example.repository;
-
 import org.example.model.Athlete;
 import org.example.model.Effort;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+
 
 public class Repository {
     List<Effort> efforts;

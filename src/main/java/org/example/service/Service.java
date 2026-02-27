@@ -1,13 +1,13 @@
 package org.example.service;
-
 import org.example.model.Athlete;
 import org.example.model.Effort;
 import org.example.model.DTOs.EffortDTO;
 import org.example.repository.Repository;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+
+
 
 public class Service {
     Repository repository;

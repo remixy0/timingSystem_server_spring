@@ -4,7 +4,7 @@ import java.util.List;
 
 public class EffortDTO {
 
-    private String athleteName; // Zgadza się z Reactem!
+    private String athleteName;
     private String date;
     private String distance;
     private Double totalTime;

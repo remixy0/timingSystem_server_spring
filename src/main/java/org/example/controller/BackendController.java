@@ -4,7 +4,6 @@ import org.example.model.Effort;
 import org.example.model.DTOs.EffortDTO;
 import org.example.service.Service;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.List;
 
 @RestController

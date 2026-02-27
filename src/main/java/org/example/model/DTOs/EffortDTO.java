@@ -1,5 +1,4 @@
 package org.example.model.DTOs;
-
 import java.util.List;
 
 public class EffortDTO {

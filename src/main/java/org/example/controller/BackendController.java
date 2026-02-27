@@ -1,6 +1,4 @@
 package org.example.controller;
-
-
 import org.example.model.Athlete;
 import org.example.model.Effort;
 import org.example.model.DTOs.EffortDTO;
@@ -13,13 +11,11 @@ import java.util.List;
 public class BackendController {
     Service service = new Service();
 
-
     @GetMapping("/api/get-efforts")
     @CrossOrigin(origins = "http://localhost:5173")
     public List<EffortDTO> getEfforts() {
         return service.getEffortsDTO();
     }
-
 
     @GetMapping("/api/get-athletes")
     @CrossOrigin(origins = "http://localhost:5173")
@@ -27,15 +23,11 @@ public class BackendController {
         return service.getAthletes();
     }
 
-
-
-
     @PostMapping("/api/add-effort")
     public String addNewEffort(@RequestBody Effort effort) {
         service.addEffort(effort);
         return "added new effort";
     }
-
 
     @PostMapping("/api/add-athlete")
     public String addNewAthlete(@RequestBody Athlete athlete) {

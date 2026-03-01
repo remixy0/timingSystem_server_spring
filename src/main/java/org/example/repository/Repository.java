@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.UUID;
 
 
-public class Repository {
+public class Repository{
     List<Effort> efforts;
     List<Athlete> athletes;
 

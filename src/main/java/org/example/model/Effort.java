@@ -1,11 +1,18 @@
 package org.example.model;
+import jakarta.persistence.Entity;
+import lombok.Getter;
+import lombok.Setter;
+import jakarta.persistence.Id;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+@Getter
+@Setter
+@Entity
 public class Effort {
-
+    @Id
     UUID id;
     UUID athleteId;
     String distance;
@@ -14,11 +21,14 @@ public class Effort {
     int distanceInMeters;
     LocalDate date;
 
+    public Effort() {
+        this.id = UUID.randomUUID();
+        this.date = LocalDate.now();
+    }
 
-
-    public Effort(UUID id,String athleteId, String distance,Double totalTime, List<Double> lapTimes,int distanceInMeters) {
+    public Effort(UUID id,UUID athleteId, String distance,Double totalTime, List<Double> lapTimes,int distanceInMeters) {
         this.id = id;
-        this.athleteId = UUID.fromString(athleteId);
+        this.athleteId = athleteId;
         this.distance = distance;
         this.totalTime = totalTime;
         if(lapTimes == null){
@@ -56,7 +66,10 @@ public class Effort {
     }
 
     public String getDate(){
-        return date.toString();
+        if(date == null){
+            return "";
+        }
+        return this.date.toString();
     }
 
     public String getDistance() {

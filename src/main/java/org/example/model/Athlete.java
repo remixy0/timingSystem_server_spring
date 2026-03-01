@@ -1,16 +1,28 @@
 package org.example.model;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import lombok.Getter;
+import lombok.Setter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+@Getter
+@Setter
+@Entity
 public class Athlete {
+    @Id
     UUID id;
     String name;
     String surname;
     List<UUID> listOfEffortsId;
 
-    public Athlete(UUID id, String name, String surname, List<String> listOfEffortsId) {
+    public Athlete() {
+        this.id = UUID.randomUUID();
+    }
+
+    public Athlete(UUID id,String name, String surname, List<String> listOfEffortsId){
         this.id = id;
         this.name = name;
         this.surname = surname;
@@ -27,11 +39,10 @@ public class Athlete {
         return id;
     }
 
-    public List<UUID> getEffortsId() {
-        return this.listOfEffortsId;
+    @Override
+    public String toString(){
+        return this.name + " " + this.surname;
     }
 
-    public String getFullName() {
-        return this.surname + " " + this.name;
-    }
+
 }

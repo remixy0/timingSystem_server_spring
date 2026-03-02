@@ -8,14 +8,14 @@ import org.example.repository.EffortRepository;
 import org.example.repository.Repository;
 import java.util.ArrayList;
 import java.util.List;
-
-
+import java.util.UUID;
 
 
 public class Service {
     Repository repository;
     private final AthleteRepository athleteRepository;
     private final EffortRepository effortRepository;
+
 
 
     public Service(AthleteRepository athleteRepository,EffortRepository effortRepository) {
@@ -38,6 +38,26 @@ public class Service {
         }
         return listOfEffortsDTO;
     }
+
+
+    public List<EffortDTO> getEffortsDTOofAthlete(UUID athleteId) {
+        System.out.println("athlete Id: " + athleteId);
+        List<EffortDTO> listOfEffortsDTO = new ArrayList<>();
+        for (UUID effortId : this.athleteRepository.findById(athleteId).get().getListOfEffortsId()) {
+            Effort effort = this.effortRepository.findById(effortId).get();
+            System.out.println(effort);
+            listOfEffortsDTO.add(new EffortDTO(
+                    athleteRepository.findById(effort.getAthleteId()).get().toString(),
+                    effort.getDate(),
+                    effort.getDistance(),
+                    effort.getTotalTime(),
+                    effort.calculateSpeed().toString(),
+                    effort.getAverageLapTime().toString(),
+                    effort.getLapTimes()));
+        }
+        return listOfEffortsDTO;
+    }
+
 
     @Transactional
     public void addEffort(Effort effort) {

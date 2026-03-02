@@ -42,17 +42,6 @@ public class Effort {
     }
 
 
-    private int distanceInMeters(){
-        String var = "";
-        for(int i=0;i<distance.length();i++){
-            char c = distance.charAt(i);
-            if(Character.isDigit(c)){
-                var += c;
-            }
-        }
-        return Integer.parseInt(var);
-    }
-
     public UUID getId() {
         return id;
     }
@@ -101,7 +90,7 @@ public class Effort {
     }
 
     public Double calculateSpeed(){
-        var number = (double) Math.round(distanceInMeters() * 360 / totalTime.doubleValue());
+        var number = (double) Math.round(distanceInMeters * 360 / totalTime.doubleValue());
         number = number/100;
         return number;
     }

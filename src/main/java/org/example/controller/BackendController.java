@@ -4,6 +4,7 @@ import org.example.model.DTOs.EffortDTO;
 import org.example.model.Distance;
 import org.example.model.Effort;
 import org.example.repository.AthleteRepository;
+import org.example.repository.DistanceRepository;
 import org.example.repository.EffortRepository;
 import org.example.service.Service;
 import org.springframework.web.bind.annotation.*;
@@ -15,12 +16,14 @@ import java.util.UUID;
 public class BackendController {
     private final EffortRepository effortRepository;
     private final AthleteRepository athleteRepository;
+    private final DistanceRepository distanceRepository;
     private final Service service;
 
-    public BackendController(AthleteRepository athleteRepository, EffortRepository effortRepository) {
+    public BackendController(AthleteRepository athleteRepository, EffortRepository effortRepository, DistanceRepository distanceRepository) {
+        this.distanceRepository = distanceRepository;
         this.effortRepository = effortRepository;
         this.athleteRepository = athleteRepository;
-        this.service = new Service(athleteRepository, effortRepository);
+        this.service = new Service(athleteRepository, effortRepository, distanceRepository);
     }
 
     //efforts
@@ -55,10 +58,15 @@ public class BackendController {
 
 
     //Distance
-    @PostMapping("/api/add-disatne")
+    @PostMapping("/api/add-distance")
     public String addNewAthlete(@RequestBody Distance distance) {
-        service.addAthlete(athlete);
-        return "added new athlete";
+        service.addDistance(distance);
+        return "added new distance";
+    }
+
+    @GetMapping("/api/get-distances")
+    public List<Distance> getDistances() {
+        return service.getDistances();
     }
 
 

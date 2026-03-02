@@ -2,15 +2,16 @@ package org.example.model;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.OneToOne;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
+
 import java.util.UUID;
 
 @Entity
 @Getter
 @Setter
+@Data
 public class Distance {
     @Id
     UUID id;
@@ -18,8 +19,7 @@ public class Distance {
     String displayName;
     int distanceInMeters;
     Disciplines discipline;
-    @OneToOne
-    @JoinColumn(name = "distance_configuration_id")
+    @JdbcTypeCode(SqlTypes.JSON)
     Configuration distanceConfiguration;
 
     public Distance() {}
@@ -31,6 +31,11 @@ public class Distance {
         this.discipline = discipline;
         this.distanceInMeters = distanceInMeters;
         this.distanceConfiguration = distanceConfiguration;
+    }
+
+    @Override
+    public String toString() {
+        return displayName;
     }
 
 }

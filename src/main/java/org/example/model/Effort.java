@@ -15,7 +15,7 @@ public class Effort {
     @Id
     UUID id;
     UUID athleteId;
-    String distance;
+    UUID distanceId;
     Double totalTime;
     List<Double>  lapTimes;
     int distanceInMeters;
@@ -26,10 +26,10 @@ public class Effort {
         this.date = LocalDate.now();
     }
 
-    public Effort(UUID id,UUID athleteId, String distance,Double totalTime, List<Double> lapTimes,int distanceInMeters) {
+    public Effort(UUID id,UUID athleteId, UUID distanceId,Double totalTime, List<Double> lapTimes,int distanceInMeters) {
         this.id = id;
         this.athleteId = athleteId;
-        this.distance = distance;
+        this.distanceId = distanceId;
         this.totalTime = totalTime;
         if(lapTimes == null){
             this.lapTimes = new ArrayList<>();
@@ -61,8 +61,8 @@ public class Effort {
         return this.date.toString();
     }
 
-    public String getDistance() {
-        return distance;
+    public UUID getDistanceId() {
+        return distanceId;
     }
 
     public Double getTotalTime() {

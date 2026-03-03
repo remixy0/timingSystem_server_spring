@@ -29,7 +29,8 @@ public class Service {
             listOfEffortsDTO.add(new EffortDTO(
                     athleteRepository.findById(effort.getAthleteId()).get().toString(),
                     effort.getDate(),
-                    distanceRepository.findById(effort.getDistanceId()).get().toString(),
+//                    distanceRepository.findById(effort.getDistanceId()).get().toString(),
+                    "test distance",
                     effort.getTotalTime(),
                     effort.calculateSpeed().toString(),
                     effort.getAverageLapTime().toString(),
@@ -47,7 +48,8 @@ public class Service {
             listOfEffortsDTO.add(new EffortDTO(
                     athleteRepository.findById(effort.getAthleteId()).get().toString(),
                     effort.getDate(),
-                    distanceRepository.findById(effort.getDistanceId()).get().toString(),
+//                    distanceRepository.findById(effort.getDistanceId()).get().toString(),
+                    "test distance",
                     effort.getTotalTime(),
                     effort.calculateSpeed().toString(),
                     effort.getAverageLapTime().toString(),

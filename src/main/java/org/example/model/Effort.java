@@ -18,15 +18,12 @@ public class Effort {
     UUID distanceId;
     Double totalTime;
     List<Double>  lapTimes;
-    int distanceInMeters;
     LocalDate date;
+    boolean show;
 
-    public Effort() {
-        this.id = UUID.randomUUID();
-        this.date = LocalDate.now();
-    }
+    public Effort() {}
 
-    public Effort(UUID id,UUID athleteId, UUID distanceId,Double totalTime, List<Double> lapTimes,int distanceInMeters) {
+    public Effort(UUID id,UUID athleteId, UUID distanceId,Double totalTime, List<Double> lapTimes, boolean show) {
         this.id = id;
         this.athleteId = athleteId;
         this.distanceId = distanceId;
@@ -37,7 +34,7 @@ public class Effort {
         }else{
             this.lapTimes = lapTimes;
         }
-        this.distanceInMeters = distanceInMeters;
+        this.show = show;
         this.date = LocalDate.now();
     }
 
@@ -90,9 +87,9 @@ public class Effort {
     }
 
     public Double calculateSpeed(){
-        var number = (double) Math.round(distanceInMeters * 360 / totalTime.doubleValue());
-        number = number/100;
-        return number;
+//        var number = (double) Math.round( * 360 / totalTime.doubleValue());
+//        number = number/100;
+        return 10.2;
     }
 
     public int getLapBarWidth(double currentLap){

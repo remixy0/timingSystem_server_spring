@@ -63,7 +63,7 @@ public class Service {
         if (effort != null && athleteRepository.findById(effort.getAthleteId()) != null) {
             effortRepository.save(effort);
             Athlete athlete = athleteRepository.findById(effort.getAthleteId()).orElse(null);
-            if (athlete != null) {
+            if (athlete != null && !athlete.getListOfEffortsId().contains(effort.getAthleteId())) {
                 athlete.addEffort(effort.getId());
                 athleteRepository.save(athlete);
             }

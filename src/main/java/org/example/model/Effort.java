@@ -3,7 +3,6 @@ import jakarta.persistence.Entity;
 import lombok.Getter;
 import lombok.Setter;
 import jakarta.persistence.Id;
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -18,12 +17,13 @@ public class Effort {
     UUID distanceId;
     Double totalTime;
     List<Double>  lapTimes;
-    LocalDate date;
+    String date;
     boolean show;
+
 
     public Effort() {}
 
-    public Effort(UUID id,UUID athleteId, UUID distanceId,Double totalTime, List<Double> lapTimes, boolean show) {
+    public Effort(UUID id,UUID athleteId, UUID distanceId,Double totalTime, List<Double> lapTimes, String date, boolean show) {
         this.id = id;
         this.athleteId = athleteId;
         this.distanceId = distanceId;
@@ -34,8 +34,8 @@ public class Effort {
         }else{
             this.lapTimes = lapTimes;
         }
+        this.date = date;
         this.show = show;
-        this.date = LocalDate.now();
     }
 
 
@@ -52,10 +52,7 @@ public class Effort {
     }
 
     public String getDate(){
-        if(date == null){
-            return "";
-        }
-        return this.date.toString();
+        return this.date;
     }
 
     public UUID getDistanceId() {

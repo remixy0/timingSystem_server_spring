@@ -43,6 +43,12 @@ public class BackendController {
         return "added new effort";
     }
 
+    @PostMapping("/api/add-efforts")
+    public String addListOfEfforts(@RequestBody List<Effort> efforts) {
+        efforts.stream().forEach(effort -> service.addEffort(effort));
+        return "added list of efforts";
+    }
+
 
     //athletes
     @GetMapping("/api/get-athletes")
@@ -54,6 +60,12 @@ public class BackendController {
     public String addNewAthlete(@RequestBody Athlete athlete) {
         service.addAthlete(athlete);
         return "added new athlete";
+    }
+
+    @PostMapping("/api/add-athletes")
+    public String addListOfAthletes(@RequestBody List<Athlete> athletes) {
+        athletes.stream().forEach(athlete -> service.addAthlete(athlete));
+        return "added list of athletes";
     }
 
 

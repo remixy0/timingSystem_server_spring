@@ -24,12 +24,12 @@ public class Distance {
 
     public Distance() {}
 
-    public Distance(UUID id, boolean show, String displayName, Disciplines discipline, int distanceInMeters, Configuration distanceConfiguration) {
+    public Distance(UUID id, boolean show, String displayName, int distanceInMeters, Disciplines discipline, Configuration distanceConfiguration) {
         this.id = id;
         this.show = show;
         this.displayName = displayName;
-        this.discipline = discipline;
         this.distanceInMeters = distanceInMeters;
+        this.discipline = discipline;
         this.distanceConfiguration = distanceConfiguration;
     }
 

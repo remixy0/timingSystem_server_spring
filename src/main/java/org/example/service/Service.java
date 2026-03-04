@@ -88,6 +88,9 @@ public class Service {
         return distanceRepository.findAll();
     }
 
+    public List<Effort> getEfforts() {
+        return effortRepository.findAll();
+    }
 
 
 

@@ -27,9 +27,14 @@ public class BackendController {
     }
 
     //efforts
-    @GetMapping("/api/get-efforts")
-    public List<EffortDTO> getEfforts() {
+    @GetMapping("/api/get-efforts-dto")
+    public List<EffortDTO> getEffortsDTO() {
         return service.getEffortsDTO();
+    }
+
+    @GetMapping("/api/get-efforts")
+    public List<Effort> getEfforts() {
+        return service.getEfforts();
     }
 
     @GetMapping("/api/get-efforts-of-athlete-id")
@@ -74,6 +79,12 @@ public class BackendController {
     public String addNewAthlete(@RequestBody Distance distance) {
         service.addDistance(distance);
         return "added new distance";
+    }
+
+    @PostMapping("/api/add-distances")
+    public String addNewAthlete(@RequestBody List<Distance> distances) {
+        distances.stream().forEach(distance -> service.addDistance(distance));
+        return "added list of distances";
     }
 
     @GetMapping("/api/get-distances")

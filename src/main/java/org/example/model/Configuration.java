@@ -14,14 +14,18 @@ public class Configuration {
     int delayBeetwenCrossings;
     boolean multipleSkaters;
     int waitingTime;
+    boolean setupMode;
+    boolean manualMode;
 
 
-    public Configuration(boolean flyingMode, int numberOfCrossings, int delayBeetwenCrossings, boolean multipleSkaters,int waitingTime) {
+    public Configuration(boolean flyingMode, int numberOfCrossings, int delayBeetwenCrossings, boolean multipleSkaters,int waitingTime, boolean setupMode, boolean manualMode) {
         this.flyingMode = flyingMode;
         this.numberOfCrossings = numberOfCrossings;
         this.delayBeetwenCrossings = delayBeetwenCrossings;
         this.multipleSkaters = multipleSkaters;
         this.waitingTime = waitingTime;
+        this.setupMode = setupMode;
+        this.manualMode = manualMode;
     }
 
 

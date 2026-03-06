@@ -17,18 +17,20 @@ public class Athlete {
     String name;
     String surname;
     List<UUID> listOfEffortsId;
+    byte[] photo;
 
     public Athlete() {
         this.id = UUID.randomUUID();
     }
 
-    public Athlete(UUID id,String name, String surname, List<String> listOfEffortsId){
+    public Athlete(UUID id,String name, String surname, List<String> listOfEffortsId, byte[] photo) {
         this.id = id;
         this.name = name;
         this.surname = surname;
         this.listOfEffortsId = listOfEffortsId.stream()
                 .map(UUID::fromString)
                 .collect(Collectors.toCollection(ArrayList::new));
+        this.photo = photo;
     }
 
     public void addEffort(UUID effortId){

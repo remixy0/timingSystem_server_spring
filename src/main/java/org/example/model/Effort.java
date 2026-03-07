@@ -1,5 +1,7 @@
 package org.example.model;
 import jakarta.persistence.Entity;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import lombok.Getter;
 import lombok.Setter;
 import jakarta.persistence.Id;
@@ -83,11 +85,6 @@ public class Effort {
                 .orElse(0.0);
     }
 
-    public Double calculateSpeed(){
-//        var number = (double) Math.round( * 360 / totalTime.doubleValue());
-//        number = number/100;
-        return 10.2;
-    }
 
     public int getLapBarWidth(double currentLap){
         int barWidth = (int) (getFastestLap() * 100/ currentLap);

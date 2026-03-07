@@ -32,6 +32,11 @@ public class BackendController {
         return service.getEffortsDTO();
     }
 
+    @GetMapping("/api/get-effort-dto-with-id")
+    public EffortDTO getEffortDTO(@RequestParam UUID effortId) {
+        return service.getEffortById(effortId);
+    }
+
     @GetMapping("/api/get-efforts")
     public List<Effort> getEfforts() {
         return service.getEfforts();

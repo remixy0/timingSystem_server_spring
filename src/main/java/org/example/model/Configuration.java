@@ -10,6 +10,7 @@ import lombok.*;
 @NoArgsConstructor
 public class Configuration {
     int numberOfCrossings;
+    int flyingModeStartLaps;
     boolean flyingMode;
     int delayBeetwenCrossings;
     boolean multipleSkaters;
@@ -18,8 +19,9 @@ public class Configuration {
     boolean manualMode;
 
 
-    public Configuration(boolean flyingMode, int numberOfCrossings, int delayBeetwenCrossings, boolean multipleSkaters,int waitingTime, boolean setupMode, boolean manualMode) {
+    public Configuration(boolean flyingMode,int flyingModeStartLaps, int numberOfCrossings, int delayBeetwenCrossings, boolean multipleSkaters,int waitingTime, boolean setupMode, boolean manualMode) {
         this.flyingMode = flyingMode;
+        this.flyingModeStartLaps = flyingModeStartLaps;
         this.numberOfCrossings = numberOfCrossings;
         this.delayBeetwenCrossings = delayBeetwenCrossings;
         this.multipleSkaters = multipleSkaters;

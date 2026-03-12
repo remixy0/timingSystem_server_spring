@@ -35,7 +35,9 @@ public class Service {
                         effort.getTotalTime(),
                         speed.toString(),
                         effort.getAverageLapTime().toString(),
-                        effort.getLapTimes()));
+                        effort.getLapTimes(),
+                        effort.isShow()
+            ));
         }
         return listOfEffortsDTO;
     }
@@ -45,16 +47,21 @@ public class Service {
         List<EffortDTO> listOfEffortsDTO = new ArrayList<>();
         for (UUID effortId : this.athleteRepository.findById(athleteId).get().getListOfEffortsId()) {
             Effort effort = this.effortRepository.findById(effortId).get();
-            Double speed = (double) Math.round( distanceRepository.findById(effort.getDistanceId()).get().getDistanceInMeters() * 360 / effort.getTotalTime());
-            speed = speed/100;
-            listOfEffortsDTO.add(new EffortDTO(
-                    athleteRepository.findById(effort.getAthleteId()).get().toString(),
-                    effort.getDate(),
-                    distanceRepository.findById(effort.getDistanceId()).get().getDisplayName(),
-                    effort.getTotalTime(),
-                    speed.toString(),
-                    effort.getAverageLapTime().toString(),
-                    effort.getLapTimes()));
+            Double speed = (double) Math.round(distanceRepository.findById(effort.getDistanceId()).get().getDistanceInMeters() * 360 / effort.getTotalTime());
+            speed = speed / 100;
+            if(effort.isShow()){
+                listOfEffortsDTO.add(new EffortDTO(
+                        athleteRepository.findById(effort.getAthleteId()).get().toString(),
+                        effort.getDate(),
+                        distanceRepository.findById(effort.getDistanceId()).get().getDisplayName(),
+                        effort.getTotalTime(),
+                        speed.toString(),
+                        effort.getAverageLapTime().toString(),
+                        effort.getLapTimes(),
+                        effort.isShow()
+
+                ));
+            }
         }
         return listOfEffortsDTO;
     }
@@ -83,7 +90,10 @@ public class Service {
                 effort.getTotalTime(),
                 speed.toString(),
                 effort.getAverageLapTime().toString(),
-                effort.getLapTimes());
+                effort.getLapTimes(),
+                effort.isShow()
+
+        );
     }
 
 

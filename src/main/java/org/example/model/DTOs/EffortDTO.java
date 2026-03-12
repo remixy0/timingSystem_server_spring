@@ -10,8 +10,9 @@ public class EffortDTO {
     private String speed;
     private String averageLapTime;
     private List<Double> lapTimes;
+    boolean show;
 
-    public EffortDTO(String athleteName, String date, String distance, Double totalTime, String speed, String averageLapTime, List<Double> lapTimes) {
+    public EffortDTO(String athleteName, String date, String distance, Double totalTime, String speed, String averageLapTime, List<Double> lapTimes, boolean show) {
         this.athleteName = athleteName;
         this.date = date;
         this.distance = distance;
@@ -19,6 +20,7 @@ public class EffortDTO {
         this.speed = speed;
         this.averageLapTime = averageLapTime;
         this.lapTimes = lapTimes;
+        this.show = show;
     }
 
     public String getDate() {
@@ -49,4 +51,7 @@ public class EffortDTO {
         return athleteName;
     }
 
+    public boolean isShow() {
+        return show;
+    }
 }

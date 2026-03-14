@@ -6,6 +6,7 @@ import org.example.model.Effort;
 import org.example.model.DTOs.EffortDTO;
 import org.example.repository.*;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.UUID;
 
@@ -39,7 +40,7 @@ public class Service {
                         effort.isShow()
             ));
         }
-        return listOfEffortsDTO;
+        return listOfEffortsDTO.stream().sorted(Comparator.comparing(EffortDTO::getDate)).toList();
     }
 
     public List<EffortDTO> getEffortsDTOofAthlete(UUID athleteId) {

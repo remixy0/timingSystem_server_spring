@@ -18,12 +18,13 @@ public class Athlete {
     String surname;
     List<UUID> listOfEffortsId;
     byte[] photo;
+    boolean show;
 
     public Athlete() {
         this.id = UUID.randomUUID();
     }
 
-    public Athlete(UUID id,String name, String surname, List<String> listOfEffortsId, byte[] photo) {
+    public Athlete(UUID id,String name, String surname, List<String> listOfEffortsId, byte[] photo, boolean show) {
         this.id = id;
         this.name = name;
         this.surname = surname;
@@ -31,6 +32,7 @@ public class Athlete {
                 .map(UUID::fromString)
                 .collect(Collectors.toCollection(ArrayList::new));
         this.photo = photo;
+        this.show = show;
     }
 
     public void addEffort(UUID effortId){

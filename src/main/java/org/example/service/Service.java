@@ -104,6 +104,10 @@ public class Service {
         }
     }
 
+    public void deleteAthlete(UUID athleteId) {
+        athleteRepository.deleteById(athleteId);
+    }
+
     public List<Athlete> getAthletes(){
         return athleteRepository.findAll();
     }

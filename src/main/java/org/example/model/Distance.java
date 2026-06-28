@@ -38,4 +38,51 @@ public class Distance {
         return displayName;
     }
 
+    public UUID getId() {
+        return id;
+    }
+
+    public void setId(UUID id) {
+        this.id = id;
+    }
+
+    public boolean isShow() {
+        return show;
+    }
+
+    public void setShow(boolean show) {
+        this.show = show;
+    }
+
+    public String getDisplayName() {
+        return displayName;
+    }
+
+    public void setDisplayName(String displayName) {
+        this.displayName = displayName;
+    }
+
+    public int getDistanceInMeters() {
+        return distanceInMeters;
+    }
+
+    public void setDistanceInMeters(int distanceInMeters) {
+        this.distanceInMeters = distanceInMeters;
+    }
+
+    public Disciplines getDiscipline() {
+        return discipline;
+    }
+
+    public void setDiscipline(Disciplines discipline) {
+        this.discipline = discipline;
+    }
+
+    public Configuration getDistanceConfiguration() {
+        return distanceConfiguration;
+    }
+
+    public void setDistanceConfiguration(Configuration distanceConfiguration) {
+        this.distanceConfiguration = distanceConfiguration;
+    }
 }

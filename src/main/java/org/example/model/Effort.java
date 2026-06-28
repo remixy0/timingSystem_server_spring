@@ -22,6 +22,37 @@ public class Effort {
     String date;
     boolean show;
 
+    public void setId(UUID id) {
+        this.id = id;
+    }
+
+    public void setAthleteId(UUID athleteId) {
+        this.athleteId = athleteId;
+    }
+
+    public void setTotalTime(Double totalTime) {
+        this.totalTime = totalTime;
+    }
+
+    public void setDistanceId(UUID distanceId) {
+        this.distanceId = distanceId;
+    }
+
+    public void setLapTimes(List<Double> lapTimes) {
+        this.lapTimes = lapTimes;
+    }
+
+    public void setDate(String date) {
+        this.date = date;
+    }
+
+    public boolean isShow() {
+        return show;
+    }
+
+    public void setShow(boolean show) {
+        this.show = show;
+    }
 
     public Effort() {}
 

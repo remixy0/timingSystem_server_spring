@@ -49,4 +49,47 @@ public class Athlete {
     }
 
 
+    public void setId(UUID id) {
+        this.id = id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getSurname() {
+        return surname;
+    }
+
+    public void setSurname(String surname) {
+        this.surname = surname;
+    }
+
+    public List<UUID> getListOfEffortsId() {
+        return listOfEffortsId;
+    }
+
+    public void setListOfEffortsId(List<UUID> listOfEffortsId) {
+        this.listOfEffortsId = listOfEffortsId;
+    }
+
+    public byte[] getPhoto() {
+        return photo;
+    }
+
+    public void setPhoto(byte[] photo) {
+        this.photo = photo;
+    }
+
+    public boolean isShow() {
+        return show;
+    }
+
+    public void setShow(boolean show) {
+        this.show = show;
+    }
 }

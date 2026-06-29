@@ -1,6 +1,8 @@
 package org.example.model;
 
 import jakarta.persistence.*;
+
+import java.util.List;
 import java.util.UUID;
 
 @Entity
@@ -14,9 +16,26 @@ public class UserEntity {
     private String username;
 
     @Column(nullable = false)
-    private String password; // Tu będzie zapisany hash, a nie czyste tekstowe hasło!
+    private String password;
 
-    // Gettery, settery, konstruktory
+    private List<String> coaches;
+
+    public void addCoach(String username){
+        this.coaches.add(username);
+    }
+
+    public void removeCoach(String username){
+        this.coaches.remove(username);
+    }
+
+    public List<String> getCoaches() {
+        return coaches;
+    }
+
+    public boolean isCoach(String username){
+        return this.coaches.contains(username);
+    }
+
     public UUID getId() { return id; }
     public void setId(UUID id) { this.id = id; }
     public String getUsername() { return username; }

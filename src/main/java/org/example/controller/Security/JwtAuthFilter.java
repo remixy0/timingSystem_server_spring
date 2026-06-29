@@ -26,22 +26,17 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 
         final String authHeader = request.getHeader("Authorization");
 
-        // 1. Sprawdź, czy nagłówek istnieje i czy zaczyna się od "Bearer "
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
             filterChain.doFilter(request, response);
             return;
         }
 
-        // 2. Wytnij sam token (pomiń słowo "Bearer ")
         final String jwt = authHeader.substring(7);
 
         try {
-            // 3. Sprawdź ważność tokenu i wyciągnij login
             if (jwtService.isTokenValid(jwt) && SecurityContextHolder.getContext().getAuthentication() == null) {
                 String username = jwtService.extractUsername(jwt);
 
-                // 4. Stwórz obiekt uwierzytelnienia i przekaż go do kontekstu Spring Security
-                // Tutaj w uproszczeniu przekazujemy pustą listę ról (Collections.emptyList())
                 UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
                         username, null, Collections.emptyList()
                 );
@@ -49,10 +44,8 @@ public class JwtAuthFilter extends OncePerRequestFilter {
                 SecurityContextHolder.getContext().setAuthentication(authToken);
             }
         } catch (Exception e) {
-            // Zła sygnatura lub token wygasł - kontekst pozostaje pusty (błąd 403/401 rzuci Spring)
         }
 
-        // 5. Przekaż zapytanie dalej w łańcuchu
         filterChain.doFilter(request, response);
     }
 }

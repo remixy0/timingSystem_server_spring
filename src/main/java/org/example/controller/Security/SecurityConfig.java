@@ -31,7 +31,6 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
-                        // Dodajemy "/api/register" po przecinku do wyjątków
                         .requestMatchers("/api/login", "/api/register").permitAll()
                         .anyRequest().authenticated()
                 )

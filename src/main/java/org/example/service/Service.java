@@ -4,6 +4,7 @@ import org.example.model.Athlete;
 import org.example.model.Distance;
 import org.example.model.Effort;
 import org.example.model.DTOs.EffortDTO;
+import org.example.model.UserEntity;
 import org.example.repository.*;
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -17,11 +18,13 @@ public class Service {
     private final AthleteRepository athleteRepository;
     private final EffortRepository effortRepository;
     private final DistanceRepository distanceRepository;
+    private final UserRepository userRepository;
 
-    public Service(AthleteRepository athleteRepository,EffortRepository effortRepository, DistanceRepository distanceRepository) {
+    public Service(AthleteRepository athleteRepository,EffortRepository effortRepository, DistanceRepository distanceRepository, UserRepository userRepository) {
         this.effortRepository = effortRepository;
         this.athleteRepository = athleteRepository;
         this.distanceRepository = distanceRepository;
+        this.userRepository = userRepository;
         this.repository = new Repository();
     }
 
@@ -98,6 +101,11 @@ public class Service {
         );
     }
 
+
+    public UserEntity getUserById(String userId) {
+        UserEntity userEntity = userRepository.findByUsername(userId).orElse(null);
+        return userEntity;
+    }
 
     public void addAthlete(Athlete athlete) {
         if (athlete != null && repository.getAthleteById(athlete.getId()) == null) {

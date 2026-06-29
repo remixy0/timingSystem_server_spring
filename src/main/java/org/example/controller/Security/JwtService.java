@@ -4,6 +4,7 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import java.security.Key;
 import java.util.Date;
@@ -11,22 +12,24 @@ import java.util.Date;
 @Component
 public class JwtService {
 
-    // W produkcji klucz powinien być wstrzykiwany z application.properties!
-    // Musi być wystarczająco długi dla algorytmu HS256 (min. 256 bitów).
-    private final String SECRET = "ToJestBardzoTajnyKluczDoPodpisywaniaTokenowJwtKtoryMusiBycDlugii";
-    private final Key key = Keys.hmacShaKeyFor(SECRET.getBytes());
+    private final String SECRET;
+    private final Key key;
 
-    // Generowanie tokenu
+    public JwtService(@Value("${app.secret-key}") String secret) {
+        this.SECRET = secret;
+        this.key = Keys.hmacShaKeyFor(SECRET.getBytes());
+    }
+
     public String generateToken(String username) {
         return Jwts.builder()
                 .setSubject(username)
                 .setIssuedAt(new Date(System.currentTimeMillis()))
-                .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60)) // Ważny 1 godzinę
+                .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 12)) // Ważny 12h
                 .signWith(key, SignatureAlgorithm.HS256)
                 .compact();
     }
 
-    // Weryfikacja i pobranie nazwy użytkownika
+
     public String extractUsername(String token) {
         return Jwts.parserBuilder()
                 .setSigningKey(key)
@@ -36,7 +39,6 @@ public class JwtService {
                 .getSubject();
     }
 
-    // Sprawdzenie czy token jest poprawny
     public boolean isTokenValid(String token) {
         try {
             Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token);

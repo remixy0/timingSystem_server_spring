@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.UUID;
 
 
+@org.springframework.stereotype.Service
 public class Service {
     Repository repository;
     private final AthleteRepository athleteRepository;
@@ -122,6 +123,10 @@ public class Service {
 
     public List<Effort> getEfforts() {
         return effortRepository.findAll();
+    }
+
+    public List<Effort> getEffortsForUser(String userID){
+       return effortRepository.findAllByOwnerId(userID);
     }
 
 

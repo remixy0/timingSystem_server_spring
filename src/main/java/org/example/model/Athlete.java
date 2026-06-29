@@ -20,6 +20,8 @@ public class Athlete {
     byte[] photo;
     boolean show;
 
+    private String ownerId;
+
     public Athlete() {
         this.id = UUID.randomUUID();
     }

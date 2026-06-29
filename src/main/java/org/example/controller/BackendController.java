@@ -7,72 +7,85 @@ import org.example.repository.AthleteRepository;
 import org.example.repository.DistanceRepository;
 import org.example.repository.EffortRepository;
 import org.example.service.Service;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.UUID;
 
 @RestController
+@RequestMapping("/api")
 @CrossOrigin(origins = "http://localhost:5173")
 public class BackendController {
-    private final EffortRepository effortRepository;
-    private final AthleteRepository athleteRepository;
-    private final DistanceRepository distanceRepository;
     private final Service service;
 
-    public BackendController(AthleteRepository athleteRepository, EffortRepository effortRepository, DistanceRepository distanceRepository) {
-        this.distanceRepository = distanceRepository;
-        this.effortRepository = effortRepository;
-        this.athleteRepository = athleteRepository;
-        this.service = new Service(athleteRepository, effortRepository, distanceRepository);
+    public BackendController(Service service) {
+        this.service = service ;
+    }
+
+    private String getCurrentUserId() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        return authentication.getName(); // Zakładamy, że name to unikalny login/ID z tokenu JWT
     }
 
     //efforts
-    @GetMapping("/api/get-efforts-dto")
+    @GetMapping("/get-efforts-dto")
     public List<EffortDTO> getEffortsDTO() {
         return service.getEffortsDTO();
     }
 
-    @GetMapping("/api/get-effort-dto-with-id")
+    @GetMapping("/get-effort-dto-with-id")
     public EffortDTO getEffortDTO(@RequestParam UUID effortId) {
         return service.getEffortById(effortId);
     }
 
-    @GetMapping("/api/get-efforts")
+    @GetMapping("/get-efforts")
     public List<Effort> getEfforts() {
-        return service.getEfforts();
+        String userId = getCurrentUserId();
+        return service.getEffortsForUser(userId);
     }
 
-    @GetMapping("/api/get-efforts-of-athlete-id")
+    @GetMapping("/get-efforts-of-athlete-id")
     public List<EffortDTO> getEffortsOfAthleteId(@RequestParam UUID athleteId) {
         return service.getEffortsDTOofAthlete(athleteId);
     }
 
-    @PostMapping("/api/add-effort")
+    @PostMapping("/add-effort")
     public String addNewEffort(@RequestBody Effort effort) {
+        String userId = getCurrentUserId();
+
+        effort.setOwnerId(userId);
         service.addEffort(effort);
+
         return "added new effort";
     }
 
-    @PostMapping("/api/add-efforts")
+    @PostMapping("/add-efforts")
     public String addListOfEfforts(@RequestBody List<Effort> efforts) {
-        efforts.stream().forEach(effort -> service.addEffort(effort));
+        String userId = getCurrentUserId();
+
+        efforts.stream().forEach(effort -> {
+            effort.setOwnerId(userId);
+            service.addEffort(effort);
+        });
+
         return "added list of efforts";
     }
 
 
     //athletes
-    @GetMapping("/api/get-athletes")
+    @GetMapping("/get-athletes")
     public List<Athlete> getAthletes() {
         return service.getAthletes();
     }
 
-    @PostMapping("/api/add-athlete")
+    @PostMapping("/add-athlete")
     public String addNewAthlete(@RequestBody Athlete athlete) {
         service.addAthlete(athlete);
         return "added new athlete";
     }
 
-    @PostMapping("/api/add-athletes")
+    @PostMapping("/add-athletes")
     public String addListOfAthletes(@RequestBody List<Athlete> athletes) {
         athletes.stream().forEach(athlete -> service.addAthlete(athlete));
         return "added list of athletes";
@@ -80,19 +93,19 @@ public class BackendController {
 
 
     //Distance
-    @PostMapping("/api/add-distance")
+    @PostMapping("/add-distance")
     public String addNewAthlete(@RequestBody Distance distance) {
         service.addDistance(distance);
         return "added new distance";
     }
 
-    @PostMapping("/api/add-distances")
+    @PostMapping("/add-distances")
     public String addNewAthlete(@RequestBody List<Distance> distances) {
         distances.stream().forEach(distance -> service.addDistance(distance));
         return "added list of distances";
     }
 
-    @GetMapping("/api/get-distances")
+    @GetMapping("/get-distances")
     public List<Distance> getDistances() {
         return service.getDistances();
     }

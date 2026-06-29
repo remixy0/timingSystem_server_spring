@@ -5,6 +5,8 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
@@ -19,20 +21,24 @@ public class SecurityConfig {
     }
 
     @Bean
+    public PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
+    }
+
+    @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-                // 1. Wyłączamy CSRF, ponieważ w API opartym na JWT (i braku ciasteczek sesyjnych) nie jesteśmy na to podatni
                 .csrf(csrf -> csrf.disable())
-                // 2. Ustalamy politykę sesji na BEZSTANOWĄ (brak JSESSIONID)
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                // 3. Konfigurujemy dostęp do endpointów
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/login").permitAll() // Logowanie jest dostępne dla każdego
-                        .anyRequest().authenticated()              // Reszta wymaga JWT
+                        // Dodajemy "/api/register" po przecinku do wyjątków
+                        .requestMatchers("/api/login", "/api/register").permitAll()
+                        .anyRequest().authenticated()
                 )
-                // 4. Dodajemy nasz filtr JWT przed standardowym filtrem sprawdzającym login i hasło
+
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }
+
 }

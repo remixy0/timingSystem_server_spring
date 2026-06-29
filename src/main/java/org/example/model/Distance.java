@@ -22,6 +22,8 @@ public class Distance {
     @JdbcTypeCode(SqlTypes.JSON)
     Configuration distanceConfiguration;
 
+    private String ownerId;
+
     public Distance() {}
 
     public Distance(UUID id, boolean show, String displayName, int distanceInMeters, Disciplines discipline, Configuration distanceConfiguration) {

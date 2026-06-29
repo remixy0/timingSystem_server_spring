@@ -22,6 +22,8 @@ public class Effort {
     String date;
     boolean show;
 
+    private String ownerId;
+
     public void setId(UUID id) {
         this.id = id;
     }

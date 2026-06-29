@@ -27,6 +27,8 @@ public class CoachController {
     public String addCoach(@RequestBody Map<String, String> request) {
         String coachUsername = request.get("username");
         String userId = getCurrentUserId();
+
+        // do poprawy
         UserEntity user = service.getUserById(userId);
 
         user.addCoach(coachUsername);

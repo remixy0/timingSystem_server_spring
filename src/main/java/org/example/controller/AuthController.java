@@ -29,8 +29,17 @@ public class AuthController {
         String username = request.get("username");
         String password = request.get("password");
 
+        if(username.length() < 6) {return ResponseEntity.badRequest().body(Map.of("message", "Username must be at least 6 characters long"));}
+
+        if(username.length() > 32) {return ResponseEntity.badRequest().body(Map.of("message", "Username is too long"));}
+
+        if(password.length() < 6) {return ResponseEntity.badRequest().body(Map.of("message", "Password must be at least 6 characters long"));}
+
+        if(password.length() > 32) {return ResponseEntity.badRequest().body(Map.of("message", "Password is too long"));}
+
+
         if (userRepository.findByUsername(username).isPresent()) {
-            return ResponseEntity.badRequest().body(Map.of("message", "Użytkownik o takiej nazwie już istnieje!"));
+            return ResponseEntity.badRequest().body(Map.of("message", "Username is already taken!"));
         }
 
         UserEntity newUser = new UserEntity();
@@ -38,7 +47,7 @@ public class AuthController {
         newUser.setPassword(passwordEncoder.encode(password));
 
         userRepository.save(newUser);
-        return ResponseEntity.ok(Map.of("message", "Rejestracja pomyślna. Możesz się zalogować."));
+        return ResponseEntity.ok(Map.of("message", "Registered successfully!"));
     }
 
 
@@ -48,7 +57,7 @@ public class AuthController {
         String password = request.get("password");
 
         UserEntity user = userRepository.findByUsername(username)
-                .orElseThrow(() -> new RuntimeException("Nie znaleziono użytkownika"));
+                .orElseThrow(() -> new RuntimeException("Username not found!"));
 
 
         if (passwordEncoder.matches(password, user.getPassword())) {
@@ -56,6 +65,6 @@ public class AuthController {
             return ResponseEntity.ok(Map.of("token", token));
         }
 
-        return ResponseEntity.status(401).body(Map.of("message", "Błędne hasło!"));
+        return ResponseEntity.status(401).body(Map.of("message", "Wrong password!"));
     }
 }

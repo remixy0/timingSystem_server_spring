@@ -1,5 +1,6 @@
 package org.example.service;
 import jakarta.transaction.Transactional;
+import org.apache.catalina.User;
 import org.example.model.Athlete;
 import org.example.model.Distance;
 import org.example.model.Effort;
@@ -106,7 +107,6 @@ public class Service {
         );
     }
 
-
     public UserEntity getUserById(String userId) {
         UserEntity userEntity = userRepository.findByUsername(userId).orElse(null);
         return userEntity;
@@ -140,6 +140,14 @@ public class Service {
 
     public List<Effort> getEffortsForUser(String userID){
        return effortRepository.findAllByOwnerId(userID);
+    }
+
+    public boolean doesUserExist(String userId) {
+        return userRepository.findByUsername(userId).isPresent();
+    }
+
+    public void saveUser(UserEntity user) {
+        userRepository.save(user);
     }
 
 

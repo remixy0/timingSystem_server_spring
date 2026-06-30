@@ -2,6 +2,7 @@ package org.example.model;
 
 import jakarta.persistence.*;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -18,7 +19,9 @@ public class UserEntity {
     @Column(nullable = false)
     private String password;
 
-    private List<String> coaches;
+    @ElementCollection(fetch = FetchType.EAGER)
+    @Column(name = "coach_username")
+    private List<String> coaches = new ArrayList<>();
 
     public void addCoach(String username){
         this.coaches.add(username);

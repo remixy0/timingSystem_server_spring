@@ -24,18 +24,29 @@ public class AthleteController {
 
     @GetMapping("/get-athletes")
     public List<Athlete> getAthletes() {
-        return service.getAthletes();
+        String userId = getCurrentUserId();
+        return service.getAthletesForUser(userId);
     }
 
     @PostMapping("/add-athlete")
     public String addNewAthlete(@RequestBody Athlete athlete) {
+        String userId = getCurrentUserId();
+
+        athlete.setOwnerId(userId);
+
         service.addAthlete(athlete);
         return "added new athlete";
     }
 
     @PostMapping("/add-athletes")
     public String addListOfAthletes(@RequestBody List<Athlete> athletes) {
-        athletes.stream().forEach(athlete -> service.addAthlete(athlete));
+        String userId = getCurrentUserId();
+
+        athletes.stream().forEach(athlete -> {
+            athlete.setOwnerId(userId);
+            service.addAthlete(athlete);
+        });
+
         return "added list of athletes";
     }
 }

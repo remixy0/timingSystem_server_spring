@@ -23,19 +23,29 @@ public class DistanceController {
 
     @PostMapping("/add-distance")
     public String addNewAthlete(@RequestBody Distance distance) {
+        String userId = getCurrentUserId();
+
+        distance.setOwnerId(userId);
         service.addDistance(distance);
         return "added new distance";
     }
 
     @PostMapping("/add-distances")
     public String addNewAthlete(@RequestBody List<Distance> distances) {
-        distances.stream().forEach(distance -> service.addDistance(distance));
+        String userId = getCurrentUserId();
+
+        distances.stream().forEach(distance -> {
+            distance.setOwnerId(userId);
+            service.addDistance(distance);
+        });
         return "added list of distances";
     }
 
     @GetMapping("/get-distances")
     public List<Distance> getDistances() {
-        return service.getDistances();
+        String userId = getCurrentUserId();
+
+        return service.getDistancesForUser(userId);
     }
 
 }

@@ -28,7 +28,7 @@ public class CoachController {
         String coachUsername = request.get("username");
         String userId = getCurrentUserId();
 
-        // do poprawy
+        // do poprawy - dodac do service
         UserEntity user = service.getUserById(userId);
 
         user.addCoach(coachUsername);

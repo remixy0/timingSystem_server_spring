@@ -28,9 +28,9 @@ public class Service {
         this.repository = new Repository();
     }
 
-    public List<EffortDTO> getEffortsDTO() {
+    public List<EffortDTO> getEffortsDTO(String userId) {
         List<EffortDTO> listOfEffortsDTO = new ArrayList<>();
-        for (Effort effort : this.effortRepository.findAll()) {
+        for (Effort effort : this.getEffortsForUser(userId)) {
             Double speed = (double) Math.round( distanceRepository.findById(effort.getDistanceId()).get().getDistanceInMeters() * 360 / effort.getTotalTime());
             speed = speed/100;
             listOfEffortsDTO.add(new EffortDTO(
@@ -47,10 +47,11 @@ public class Service {
         return listOfEffortsDTO.stream().sorted(Comparator.comparing(EffortDTO::getDate)).toList();
     }
 
-    public List<EffortDTO> getEffortsDTOofAthlete(UUID athleteId) {
+    public List<EffortDTO> getEffortsDTOofAthlete(UUID athleteId, String userId) {
         System.out.println("athlete Id: " + athleteId);
         List<EffortDTO> listOfEffortsDTO = new ArrayList<>();
-        for (UUID effortId : this.athleteRepository.findById(athleteId).get().getListOfEffortsId()) {
+        Athlete athlete = athleteRepository.findAllByOwnerId(userId).stream().filter(x -> x.getId().equals(athleteId)).findFirst().orElse(null);
+        for (UUID effortId : athlete.getListOfEffortsId()) {
             Effort effort = this.effortRepository.findById(effortId).get();
             Double speed = (double) Math.round(distanceRepository.findById(effort.getDistanceId()).get().getDistanceInMeters() * 360 / effort.getTotalTime());
             speed = speed / 100;
@@ -84,8 +85,12 @@ public class Service {
         }
     }
 
-    public EffortDTO getEffortById(UUID id) {
-        Effort effort = effortRepository.findById(id).orElse(null);
+    public EffortDTO getEffortById(UUID id, String userId) {
+        Effort effort = this.getEffortsForUser(userId).stream()
+                .filter(e -> e.getId().equals(id))
+                .findFirst()
+                .orElse(null);
+
         Double speed = (double) Math.round( distanceRepository.findById(effort.getDistanceId()).get().getDistanceInMeters() * 360 / effort.getTotalTime());
         speed = speed/100;
         return new EffortDTO(
@@ -117,16 +122,16 @@ public class Service {
         athleteRepository.deleteById(athleteId);
     }
 
-    public List<Athlete> getAthletes(){
-        return athleteRepository.findAll();
+    public List<Athlete> getAthletesForUser(String userId) {
+        return athleteRepository.findAllByOwnerId(userId);
     }
 
     public void addDistance(Distance distance) {
         distanceRepository.save(distance);
     }
 
-    public List<Distance> getDistances() {
-        return distanceRepository.findAll();
+    public List<Distance> getDistancesForUser(String userId) {
+        return distanceRepository.findAllByOwnerId(userId);
     }
 
     public List<Effort> getEfforts() {

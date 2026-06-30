@@ -24,15 +24,16 @@ public class EffortController {
         return authentication.getName();
     }
 
-
     @GetMapping("/get-efforts-dto")
     public List<EffortDTO> getEffortsDTO() {
-        return service.getEffortsDTO();
+        String userId = getCurrentUserId();
+        return service.getEffortsDTO(userId);
     }
 
     @GetMapping("/get-effort-dto-with-id")
     public EffortDTO getEffortDTO(@RequestParam UUID effortId) {
-        return service.getEffortById(effortId);
+        String userId = getCurrentUserId();
+        return service.getEffortById(effortId, userId);
     }
 
     @GetMapping("/get-efforts")
@@ -43,7 +44,8 @@ public class EffortController {
 
     @GetMapping("/get-efforts-of-athlete-id")
     public List<EffortDTO> getEffortsOfAthleteId(@RequestParam UUID athleteId) {
-        return service.getEffortsDTOofAthlete(athleteId);
+        String userId = getCurrentUserId();
+        return service.getEffortsDTOofAthlete(athleteId,userId);
     }
 
     @PostMapping("/add-effort")

@@ -23,7 +23,6 @@ public class AuthController {
         this.jwtService = jwtService;
     }
 
-
     @PostMapping("/register")
     public ResponseEntity<?> register(@RequestBody Map<String, String> request) {
         String username = request.get("username");

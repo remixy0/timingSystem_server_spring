@@ -2,10 +2,12 @@ package org.example.controller;
 import org.example.model.DTOs.EffortDTO;
 import org.example.model.Effort;
 import org.example.service.Service;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 
@@ -49,17 +51,17 @@ public class EffortController {
     }
 
     @PostMapping("/add-effort")
-    public String addNewEffort(@RequestBody Effort effort) {
+    public ResponseEntity<?> addNewEffort(@RequestBody Effort effort) {
         String userId = getCurrentUserId();
 
         effort.setOwnerId(userId);
         service.addEffort(effort);
 
-        return "added new effort";
+        return ResponseEntity.ok(Map.of("message", "Added successfully!"));
     }
 
     @PostMapping("/add-efforts")
-    public String addListOfEfforts(@RequestBody List<Effort> efforts) {
+    public ResponseEntity<?> addListOfEfforts(@RequestBody List<Effort> efforts) {
         String userId = getCurrentUserId();
 
         efforts.stream().forEach(effort -> {
@@ -67,7 +69,7 @@ public class EffortController {
             service.addEffort(effort);
         });
 
-        return "added list of efforts";
+        return ResponseEntity.ok(Map.of("message", "Added successfully!"));
     }
 
 }

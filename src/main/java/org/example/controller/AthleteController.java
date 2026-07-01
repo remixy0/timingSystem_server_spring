@@ -1,10 +1,12 @@
 package org.example.controller;
 import org.example.model.Athlete;
 import org.example.service.Service;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api")
@@ -21,7 +23,6 @@ public class AthleteController {
         return authentication.getName();
     }
 
-
     @GetMapping("/get-athletes")
     public List<Athlete> getAthletes() {
         String userId = getCurrentUserId();
@@ -29,17 +30,17 @@ public class AthleteController {
     }
 
     @PostMapping("/add-athlete")
-    public String addNewAthlete(@RequestBody Athlete athlete) {
+    public ResponseEntity<?> addNewAthlete(@RequestBody Athlete athlete) {
         String userId = getCurrentUserId();
 
         athlete.setOwnerId(userId);
-
         service.addAthlete(athlete);
-        return "added new athlete";
+
+        return ResponseEntity.ok(Map.of("message", "Added successfully!"));
     }
 
     @PostMapping("/add-athletes")
-    public String addListOfAthletes(@RequestBody List<Athlete> athletes) {
+    public ResponseEntity<?> addListOfAthletes(@RequestBody List<Athlete> athletes) {
         String userId = getCurrentUserId();
 
         athletes.stream().forEach(athlete -> {
@@ -47,7 +48,7 @@ public class AthleteController {
             service.addAthlete(athlete);
         });
 
-        return "added list of athletes";
+        return ResponseEntity.ok(Map.of("message", "Added successfully!"));
     }
 }
 

@@ -1,6 +1,5 @@
 package org.example.service;
 import jakarta.transaction.Transactional;
-import org.apache.catalina.User;
 import org.example.model.Athlete;
 import org.example.model.Distance;
 import org.example.model.Effort;

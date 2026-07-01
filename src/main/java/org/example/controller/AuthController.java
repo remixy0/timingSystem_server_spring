@@ -49,7 +49,6 @@ public class AuthController {
         return ResponseEntity.ok(Map.of("message", "Registered successfully!"));
     }
 
-
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody Map<String, String> request) {
         String username = request.get("username");

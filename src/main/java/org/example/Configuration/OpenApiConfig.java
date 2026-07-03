@@ -1,22 +1,21 @@
 package org.example.Configuration;
 
 import io.swagger.v3.oas.annotations.OpenAPIDefinition;
-import io.swagger.v3.oas.annotations.enums.SecuritySchemeType;
+import io.swagger.v3.oas.annotations.info.Contact;
 import io.swagger.v3.oas.annotations.info.Info;
-import io.swagger.v3.oas.annotations.security.SecurityRequirement;
-import io.swagger.v3.oas.annotations.security.SecurityScheme;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
 @OpenAPIDefinition(
-        info = @Info(title = "Moje API Sportowe", version = "1.0", description = "Dokumentacja endpointów dla aplikacji iOS"),
-        security = @SecurityRequirement(name = "Bearer Token")
-)
-@SecurityScheme(
-        name = "Bearer Token",
-        type = SecuritySchemeType.HTTP,
-        scheme = "bearer",
-        bearerFormat = "JWT"
+        info = @Info(
+                title = "BLResult API",
+                version = "1.0.0",
+                description = "Main documentation of API for IOs and web application.",
+                contact = @Contact(
+                        name = "Stanisław Sikora",
+                        email = "stanislawsikora626@gmail.com"
+                )
+        )
 )
 public class OpenApiConfig {
 }

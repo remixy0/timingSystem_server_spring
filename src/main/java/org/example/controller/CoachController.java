@@ -1,4 +1,8 @@
 package org.example.controller;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.example.model.Effort;
 import org.example.model.UserEntity;
 import org.example.service.Service;
@@ -13,6 +17,7 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/api")
+@Tag(name = "Coaches")
 @CrossOrigin(origins = "http://localhost:5173")
 public class CoachController {
     private final Service service;
@@ -26,6 +31,11 @@ public class CoachController {
         return authentication.getName();
     }
 
+
+    @Operation(
+            summary = "Adds a coach to profile",
+            description = "Adds a coach to profile. Coach will get access to efforts of the profile."
+    )
     @PostMapping("/add-coach")
     public ResponseEntity<?> addCoach(@RequestBody Map<String, String> request) {
         String coachUsername = request.get("username");
@@ -44,6 +54,10 @@ public class CoachController {
         return ResponseEntity.ok(Map.of("message", "Added successfully!"));
     }
 
+    @Operation(
+            summary = "Removes coach",
+            description = "Removes coach from user profile"
+    )
     @DeleteMapping("/remove-coach")
     public ResponseEntity<?> removeCoach(@RequestBody Map<String, String> request) {
         String coachUsername = request.get("username");
@@ -60,6 +74,10 @@ public class CoachController {
         return ResponseEntity.ok(Map.of("message", "Deleted successfully!"));
     }
 
+    @Operation(
+            summary = "Returns efforts of the given user",
+            description = "Returns list of efforts object for given user account, coach has to be added in the user profile to acces the data."
+    )
     @GetMapping("/get-efforts-as-coach")
     public List<Effort> getDataAsCoach(@RequestBody Map<String, String> request) {
         String username = request.get("username");
@@ -76,11 +94,6 @@ public class CoachController {
 
         return efforts;
     }
-
-
-
-
-
 
 }
 

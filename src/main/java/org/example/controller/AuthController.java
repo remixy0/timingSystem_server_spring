@@ -1,5 +1,6 @@
 package org.example.controller;
 
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.example.controller.Security.JwtService;
 import org.example.model.UserEntity;
 import org.example.repository.UserRepository;
@@ -10,6 +11,7 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/api")
+@Tag(name = "Auth")
 @CrossOrigin(origins = "http://localhost:5173")
 public class AuthController {
 

@@ -1,4 +1,6 @@
 package org.example.controller;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.example.model.Distance;
 import org.example.service.Service;
 import org.springframework.http.ResponseEntity;
@@ -10,6 +12,7 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/api")
+@Tag(name = "Distances")
 @CrossOrigin(origins = "http://localhost:5173")
 public class DistanceController {
     private final Service service;
@@ -23,6 +26,9 @@ public class DistanceController {
         return authentication.getName();
     }
 
+    @Operation(
+            summary = "adds Distance"
+    )
     @PostMapping("/add-distance")
     public ResponseEntity<?> addNewAthlete(@RequestBody Distance distance) {
         String userId = getCurrentUserId();
@@ -33,6 +39,9 @@ public class DistanceController {
         return ResponseEntity.ok(Map.of("message", "Added successfully!"));
     }
 
+    @Operation(
+            summary = "adds list of Distances"
+    )
     @PostMapping("/add-distances")
     public ResponseEntity<?> addNewAthlete(@RequestBody List<Distance> distances) {
         String userId = getCurrentUserId();
@@ -44,6 +53,9 @@ public class DistanceController {
         return ResponseEntity.ok(Map.of("message", "Added successfully!"));
     }
 
+    @Operation(
+            summary = "returns list of Distances"
+    )
     @GetMapping("/get-distances")
     public List<Distance> getDistances() {
         String userId = getCurrentUserId();

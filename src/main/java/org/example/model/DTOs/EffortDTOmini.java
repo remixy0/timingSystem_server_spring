@@ -2,7 +2,7 @@ package org.example.model.DTOs;
 import java.util.List;
 import java.util.UUID;
 
-public class EffortDTO {
+public class EffortDTOmini{
 
     private UUID id;
     private String athleteName;
@@ -11,10 +11,9 @@ public class EffortDTO {
     private Double totalTime;
     private String speed;
     private String averageLapTime;
-    private List<Double> lapTimes;
     boolean show;
 
-    public EffortDTO(UUID id,String athleteName, String date, String distance, Double totalTime, String speed, String averageLapTime, List<Double> lapTimes, boolean show) {
+    public EffortDTOmini(UUID id,String athleteName, String date, String distance, Double totalTime, String speed, String averageLapTime, boolean show) {
         this.id = id;
         this.athleteName = athleteName;
         this.date = date;
@@ -22,7 +21,6 @@ public class EffortDTO {
         this.totalTime = totalTime;
         this.speed = speed;
         this.averageLapTime = averageLapTime;
-        this.lapTimes = lapTimes;
         this.show = show;
     }
 
@@ -31,10 +29,6 @@ public class EffortDTO {
     }
     public String getDate() {
         return date;
-    }
-
-    public List<Double> getLapTimes() {
-        return lapTimes;
     }
 
     public String getAverageLapTime() {

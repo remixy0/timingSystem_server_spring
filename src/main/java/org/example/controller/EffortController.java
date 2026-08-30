@@ -2,6 +2,7 @@ package org.example.controller;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.example.model.DTOs.EffortDTO;
+import org.example.model.DTOs.EffortDTOmini;
 import org.example.model.Effort;
 import org.example.service.Service;
 import org.springframework.http.ResponseEntity;
@@ -26,6 +27,7 @@ public class EffortController {
 
     private String getCurrentUserId() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        System.out.println(authentication.getName());
         return authentication.getName();
     }
 
@@ -36,6 +38,15 @@ public class EffortController {
     public List<EffortDTO> getEffortsDTO() {
         String userId = getCurrentUserId();
         return service.getEffortsDTO(userId);
+    }
+
+    @Operation(
+            summary = "returns efforts DTOmini"
+    )
+    @GetMapping("/get-efforts-dtom")
+    public List<EffortDTOmini> getEffortsDTOmini() {
+        String userId = getCurrentUserId();
+        return service.getEffortsDTOmini(userId);
     }
 
     @Operation(

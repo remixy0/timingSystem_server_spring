@@ -1,6 +1,7 @@
 package org.example.service;
 import jakarta.transaction.Transactional;
 import org.example.model.Athlete;
+import org.example.model.DTOs.EffortDTOmini;
 import org.example.model.Distance;
 import org.example.model.Effort;
 import org.example.model.DTOs.EffortDTO;
@@ -34,6 +35,7 @@ public class Service {
             Double speed = (double) Math.round( distanceRepository.findById(effort.getDistanceId()).get().getDistanceInMeters() * 360 / effort.getTotalTime());
             speed = speed/100;
             listOfEffortsDTO.add(new EffortDTO(
+                        effort.getId(),
                         athleteRepository.findById(effort.getAthleteId()).get().toString(),
                         effort.getDate(),
                         distanceRepository.findById(effort.getDistanceId()).get().getDisplayName(),
@@ -47,6 +49,25 @@ public class Service {
         return listOfEffortsDTO.stream().sorted(Comparator.comparing(EffortDTO::getDate)).toList();
     }
 
+    public List<EffortDTOmini> getEffortsDTOmini(String userId) {
+        List<EffortDTOmini> listOfEffortsDTOmini = new ArrayList<>();
+        for (Effort effort : this.getEffortsForUser(userId)) {
+            Double speed = (double) Math.round( distanceRepository.findById(effort.getDistanceId()).get().getDistanceInMeters() * 360 / effort.getTotalTime());
+            speed = speed/100;
+            listOfEffortsDTOmini.add(new EffortDTOmini(
+                    effort.getId(),
+                    athleteRepository.findById(effort.getAthleteId()).get().toString(),
+                    effort.getDate(),
+                    distanceRepository.findById(effort.getDistanceId()).get().getDisplayName(),
+                    effort.getTotalTime(),
+                    speed.toString(),
+                    effort.getAverageLapTime().toString(),
+                    effort.isShow()
+            ));
+        }
+        return listOfEffortsDTOmini.stream().sorted(Comparator.comparing(EffortDTOmini::getDate)).toList();
+    }
+
     public List<EffortDTO> getEffortsDTOofAthlete(UUID athleteId, String userId) {
         System.out.println("athlete Id: " + athleteId);
         List<EffortDTO> listOfEffortsDTO = new ArrayList<>();
@@ -57,6 +78,7 @@ public class Service {
             speed = speed / 100;
             if(effort.isShow()){
                 listOfEffortsDTO.add(new EffortDTO(
+                        effort.getId(),
                         athleteRepository.findById(effort.getAthleteId()).get().toString(),
                         effort.getDate(),
                         distanceRepository.findById(effort.getDistanceId()).get().getDisplayName(),
@@ -94,6 +116,7 @@ public class Service {
         Double speed = (double) Math.round( distanceRepository.findById(effort.getDistanceId()).get().getDistanceInMeters() * 360 / effort.getTotalTime());
         speed = speed/100;
         return new EffortDTO(
+                effort.getId(),
                 athleteRepository.findById(effort.getAthleteId()).get().toString(),
                 effort.getDate(),
                 distanceRepository.findById(effort.getDistanceId()).get().getDisplayName(),

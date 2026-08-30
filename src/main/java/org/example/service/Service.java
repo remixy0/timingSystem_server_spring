@@ -148,6 +148,14 @@ public class Service {
         return athleteRepository.findAllByOwnerId(userId);
     }
 
+    public Athlete getAthleteofId(String userId, UUID athleteId) {
+        Athlete athlete =  athleteRepository.findAllByOwnerId(userId).stream()
+                .filter(e -> e.getId().equals(athleteId))
+                .findFirst()
+                .orElse(null);
+        return athlete;
+    }
+
     public void addDistance(Distance distance) {
         distanceRepository.save(distance);
     }

@@ -9,6 +9,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/api")
@@ -33,6 +34,16 @@ public class AthleteController {
     public List<Athlete> getAthletes() {
         String userId = getCurrentUserId();
         return service.getAthletesForUser(userId);
+    }
+
+    @Operation(
+            summary = "returns Athlete of Id"
+    )
+    @GetMapping("/get-athlete-id")
+    public Athlete getAthleteById(@RequestParam UUID athleteId) {
+        String userId = getCurrentUserId();
+        return service.getAthleteofId(userId, athleteId);
+
     }
 
     @Operation(

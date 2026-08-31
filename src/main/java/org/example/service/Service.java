@@ -68,6 +68,7 @@ public class Service {
         return listOfEffortsDTOmini.stream().sorted(Comparator.comparing(EffortDTOmini::getDate)).toList();
     }
 
+
     public List<EffortDTO> getEffortsDTOofAthlete(UUID athleteId, String userId) {
         System.out.println("athlete Id: " + athleteId);
         List<EffortDTO> listOfEffortsDTO = new ArrayList<>();

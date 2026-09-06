@@ -15,7 +15,6 @@ import java.util.UUID;
 
 @org.springframework.stereotype.Service
 public class Service {
-    Repository repository;
     private final AthleteRepository athleteRepository;
     private final EffortRepository effortRepository;
     private final DistanceRepository distanceRepository;
@@ -26,7 +25,6 @@ public class Service {
         this.athleteRepository = athleteRepository;
         this.distanceRepository = distanceRepository;
         this.userRepository = userRepository;
-        this.repository = new Repository();
     }
 
     public List<EffortDTO> getEffortsDTO(String userId) {
@@ -136,7 +134,7 @@ public class Service {
     }
 
     public void addAthlete(Athlete athlete) {
-        if (athlete != null && repository.getAthleteById(athlete.getId()) == null) {
+        if (athlete != null && athleteRepository.getReferenceById(athlete.getId()) == null) {
             athleteRepository.save(athlete);
         }
     }

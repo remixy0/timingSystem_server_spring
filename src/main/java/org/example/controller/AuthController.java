@@ -11,6 +11,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
+import java.util.Optional;
 import java.util.UUID;
 
 @RestController
@@ -56,8 +57,13 @@ public class AuthController {
         String username = request.get("username");
         String password = request.get("password");
 
-        UserEntity user = userRepository.findByUsername(username)
-                .orElseThrow(() -> new RuntimeException("Username not found!"));
+        Optional<UserEntity> userOpt = userRepository.findByUsername(username);
+
+        if (userOpt.isEmpty()) {
+            return ResponseEntity.status(401).body(Map.of("message", "User doesn't exist!"));
+        }
+
+        UserEntity user = userOpt.get();
 
 
         if (passwordEncoder.matches(password, user.getPassword())) {

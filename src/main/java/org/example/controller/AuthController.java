@@ -6,6 +6,7 @@ import org.example.model.RegisterRequest;
 import org.example.model.UserEntity;
 import org.example.repository.RegisteredUsersForVerificationRepository;
 import org.example.repository.UserRepository;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
@@ -48,7 +49,6 @@ public class AuthController {
 
         registeredUsersForVerificationRepository.registerUserForVerification(newUser);
 
-//        userRepository.save(newUser);
         return ResponseEntity.ok(Map.of("message", "Registered successfully!"));
     }
 
@@ -59,12 +59,11 @@ public class AuthController {
 
         Optional<UserEntity> userOpt = userRepository.findByUsername(username);
 
-        if (userOpt.isEmpty()) {
-            return ResponseEntity.status(401).body(Map.of("message", "User doesn't exist!"));
-        }
+        if(registeredUsersForVerificationRepository.isUserRegisteredForVerification(username)) return ResponseEntity.status(401).body(Map.of("message", "You need to verify your e-mail."));
+
+        if (userOpt.isEmpty()) return ResponseEntity.status(401).body(Map.of("message", "User doesn't exist!"));
 
         UserEntity user = userOpt.get();
-
 
         if (passwordEncoder.matches(password, user.getPassword())) {
             String token = jwtService.generateToken(user.getUsername());
@@ -74,15 +73,48 @@ public class AuthController {
         return ResponseEntity.status(401).body(Map.of("message", "Wrong password!"));
     }
 
-    @GetMapping("/verify")
-    public ResponseEntity<?> verifyUser(@RequestParam Integer code) {
-        System.out.println("VERIFICATION CODE: " + code);
+    @GetMapping(value = "/verify", produces = MediaType.TEXT_HTML_VALUE)
+    public ResponseEntity<String> verifyUser(@RequestParam Integer code) {
         UserEntity user =  registeredUsersForVerificationRepository.verifyUser(code);
-        if (user == null) return ResponseEntity.badRequest().body(Map.of("message", "Wrong code!"));
+        if (user == null){return ResponseEntity.badRequest().body(this.body_fail);}
         userRepository.save(user);
-        return ResponseEntity.ok(Map.of("message", "Verified successfully!"));
+        return ResponseEntity.ok(this.body_succes);
     }
 
+
+    @PostMapping("/verify/resend")
+    public ResponseEntity<?> resendVerificationCode(@RequestParam String username) {
+        if(registeredUsersForVerificationRepository.resendVerificationCode(username)){
+            return ResponseEntity.ok().body(Map.of("message", "Verification code has been sent!"));
+        }else{
+            return ResponseEntity.badRequest().body(Map.of("message", "Cannot resend verification code."));
+        }
+    }
+
+
+    private String body_fail = """
+            <!DOCTYPE html>
+            <html>
+            <body style="background-color: #0b102e; color: #ffffff; font-family: sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0;">
+                <div style="background-color: #12193e; padding: 40px; border-radius: 12px; text-align: center; border: 1px solid #1e285a; max-width: 400px;">
+                    <h1 style="color: #ff4d4d; margin-top: 0;">Verification Failed</h1>
+                    <p style="color: #94a3b8;">The verification code is invalid or has expired.</p>
+                </div>
+            </body>
+            </html>
+            """;
+
+    private String body_succes = """
+        <!DOCTYPE html>
+        <html>
+        <body style="background-color: #0b102e; color: #ffffff; font-family: sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0;">
+            <div style="background-color: #12193e; padding: 40px; border-radius: 12px; text-align: center; border: 1px solid #1e285a; max-width: 400px;">
+                <h1 style="color: #2ecc71; margin-top: 0;">Account Verified!</h1>
+                <p style="color: #94a3b8;">Your account is now active. You can close this tab and log in.</p>
+            </div>
+        </body>
+        </html>
+        """;
 
     private ResponseEntity<?> checkData(String username, String password, String email) {
 
@@ -106,7 +138,5 @@ public class AuthController {
 
         return null;
     }
-
-
 
 }

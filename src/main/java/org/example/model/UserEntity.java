@@ -22,9 +22,15 @@ public class UserEntity {
     @Column(nullable = false)
     private String password;
 
-    @ElementCollection(fetch = FetchType.EAGER)
-    @Column(name = "coach_username")
+    @ElementCollection(fetch = FetchType.LAZY)
+    @Column(name = "coach_usernames")
     private List<String> coaches = new ArrayList<>();
+
+    @ElementCollection(fetch = FetchType.LAZY)
+    @Column(name = "athletes_usernames")
+    private List<String> coachingAthletes = new ArrayList<>();
+
+
 
     public void addCoach(String username){
         this.coaches.add(username);
@@ -42,6 +48,18 @@ public class UserEntity {
         return this.coaches.contains(username);
     }
 
+    public void addCoachingAthlete(String username){
+        this.coachingAthletes.add(username);
+    }
+
+    public void removeCoachingAthlete(String username){
+        this.coachingAthletes.remove(username);
+    }
+
+    public List<String> getCoachingAthletes() {
+        return coachingAthletes;
+    }
+
 
     public UUID getId() { return id; }
     public void setId(UUID id) { this.id = id; }
@@ -51,4 +69,5 @@ public class UserEntity {
     public void setPassword(String password) { this.password = password; }
     public String getEmail() { return email; }
     public void setEmail(String email) { this.email = email; }
+
 }

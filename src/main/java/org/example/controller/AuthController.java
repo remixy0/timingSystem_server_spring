@@ -2,7 +2,7 @@ package org.example.controller;
 
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.example.controller.Security.JwtService;
-import org.example.model.RegisterRequest;
+import org.example.model.DTOs.RegisterRequest;
 import org.example.model.UserEntity;
 import org.example.repository.RegisteredUsersForVerificationRepository;
 import org.example.repository.UserRepository;
@@ -13,7 +13,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
 import java.util.Optional;
-import java.util.UUID;
 
 @RestController
 @RequestMapping("/api")

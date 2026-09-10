@@ -52,11 +52,10 @@ public class AthleteController {
     @PostMapping("/add-athlete")
     public ResponseEntity<?> addNewAthlete(@RequestBody Athlete athlete) {
         String userId = getCurrentUserId();
-
         athlete.setOwnerId(userId);
-        service.addAthlete(athlete);
 
-        return ResponseEntity.ok(Map.of("message", "Added successfully!"));
+        if(service.addAthlete(athlete)) return ResponseEntity.ok(Map.of("message", "Added successfully!"));
+        return ResponseEntity.badRequest().body(Map.of("message", "Failed to add athlete!"));
     }
 
     @Operation(

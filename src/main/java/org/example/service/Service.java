@@ -7,6 +7,8 @@ import org.example.model.Effort;
 import org.example.model.DTOs.EffortDTO;
 import org.example.model.UserEntity;
 import org.example.repository.*;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
+
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -19,12 +21,14 @@ public class Service {
     private final EffortRepository effortRepository;
     private final DistanceRepository distanceRepository;
     private final UserRepository userRepository;
+    private final SimpMessagingTemplate messagingTemplate;
 
-    public Service(AthleteRepository athleteRepository,EffortRepository effortRepository, DistanceRepository distanceRepository, UserRepository userRepository) {
+    public Service(AthleteRepository athleteRepository,EffortRepository effortRepository, DistanceRepository distanceRepository, UserRepository userRepository, SimpMessagingTemplate messagingTemplate) {
         this.effortRepository = effortRepository;
         this.athleteRepository = athleteRepository;
         this.distanceRepository = distanceRepository;
         this.userRepository = userRepository;
+        this.messagingTemplate = messagingTemplate;
     }
 
     public List<EffortDTO> getEffortsDTO(String userId) {
@@ -95,15 +99,24 @@ public class Service {
 
     @Transactional
     public void addEffort(Effort effort) {
-        if (effort != null && athleteRepository.findById(effort.getAthleteId()) != null) {
+        if (effort == null || effort.getAthleteId() == null) return;
 
-            effortRepository.save(effort);
-            Athlete athlete = athleteRepository.findById(effort.getAthleteId()).orElse(null);
-            if (athlete != null && !athlete.getListOfEffortsId().contains(effort.getAthleteId())) {
-                athlete.addEffort(effort.getId());
-                athleteRepository.save(athlete);
-            }
+        Athlete athlete = athleteRepository.findById(effort.getAthleteId()).orElse(null);
+        if (athlete == null) return;
+
+        Effort savedEffort = effortRepository.save(effort);
+
+        if (athlete.getListOfEffortsId() != null && !athlete.getListOfEffortsId().contains(savedEffort.getId())) {
+            athlete.addEffort(savedEffort.getId());
+            athleteRepository.save(athlete);
         }
+
+        System.out.println("WYKONANO FUNKCJE DODANIA!!");
+        messagingTemplate.convertAndSendToUser(
+                savedEffort.getOwnerId(),
+                "/queue/efforts",
+                this.effortToEffortDTO(savedEffort)
+        );
     }
 
     public EffortDTO getEffortById(UUID id, String userId) {
@@ -128,15 +141,17 @@ public class Service {
         );
     }
 
-    public UserEntity getUserById(String userId) {
-        UserEntity userEntity = userRepository.findByUsername(userId).orElse(null);
+    public UserEntity getUserByUsername(String username) {
+        UserEntity userEntity = userRepository.findByUsername(username).orElse(null);
         return userEntity;
     }
 
-    public void addAthlete(Athlete athlete) {
-        if (athlete != null && athleteRepository.getReferenceById(athlete.getId()) == null) {
-            athleteRepository.save(athlete);
-        }
+    public boolean addAthlete(Athlete athlete) {
+        if (athlete == null || athleteRepository.existsById(athlete.getId())) return false;
+
+        athleteRepository.save(athlete);
+        return true;
+
     }
 
     public void deleteAthlete(UUID athleteId) {
@@ -180,5 +195,23 @@ public class Service {
     }
 
 
+    public EffortDTO effortToEffortDTO(Effort effort) {
+            Double speed = (double) Math.round( distanceRepository.findById(effort.getDistanceId()).get().getDistanceInMeters() * 360 / effort.getTotalTime());
+            speed = speed/100;
+            return new EffortDTO(
+                    effort.getId(),
+                    athleteRepository.findById(effort.getAthleteId()).get().toString(),
+                    effort.getDate(),
+                    distanceRepository.findById(effort.getDistanceId()).get().getDisplayName(),
+                    effort.getTotalTime(),
+                    speed.toString(),
+                    effort.getAverageLapTime().toString(),
+                    effort.getLapTimes(),
+                    effort.isShow()
+            );
+        }
 
-}
+    }
+
+
+

@@ -15,7 +15,7 @@ public class EmailService {
         this.mailSender = mailSender;
     }
 
-    public void sendEmail(String to, String subject, String userName) {
+    public void sendVerificationEmail(String to, String subject, String userName) {
         MimeMessage message = mailSender.createMimeMessage();
 
         try {

@@ -1,11 +1,13 @@
 package org.example.model;
 
 import jakarta.persistence.*;
+import lombok.Data;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+@Data
 @Entity
 @Table(name = "users")
 public class UserEntity {
@@ -22,41 +24,43 @@ public class UserEntity {
     @Column(nullable = false)
     private String password;
 
+    private byte[] photo;
+
     @ElementCollection(fetch = FetchType.LAZY)
     @Column(name = "coach_usernames")
-    private List<String> coaches = new ArrayList<>();
+    private List<UserEntity> coaches = new ArrayList<>();
 
     @ElementCollection(fetch = FetchType.LAZY)
     @Column(name = "athletes_usernames")
-    private List<String> coachingAthletes = new ArrayList<>();
+    private List<UserEntity> coachingAthletes = new ArrayList<>();
 
 
 
-    public void addCoach(String username){
-        this.coaches.add(username);
+    public void addCoach(UserEntity coach) {
+        this.coaches.add(coach);
     }
 
-    public void removeCoach(String username){
-        this.coaches.remove(username);
+    public void removeCoach(UserEntity coach) {
+        this.coaches.remove(coach);
     }
 
-    public List<String> getCoaches() {
+    public List<UserEntity> getCoaches() {
         return coaches;
     }
 
-    public boolean isCoach(String username){
-        return this.coaches.contains(username);
+    public boolean isCoach(UserEntity coach) {
+        return this.coaches.contains(coach);
     }
 
-    public void addCoachingAthlete(String username){
-        this.coachingAthletes.add(username);
+    public void addCoachingAthlete(UserEntity coachingAthlete) {
+        this.coachingAthletes.add(coachingAthlete);
     }
 
-    public void removeCoachingAthlete(String username){
-        this.coachingAthletes.remove(username);
+    public void removeCoachingAthlete(UserEntity coachingAthlete) {
+        this.coachingAthletes.remove(coachingAthlete);
     }
 
-    public List<String> getCoachingAthletes() {
+    public List<UserEntity> getCoachingAthletes() {
         return coachingAthletes;
     }
 

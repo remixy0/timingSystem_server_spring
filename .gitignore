@@ -4,7 +4,9 @@ target/
 !**/src/test/**/target/
 .kotlin
 
-.properties
+*.properties
+.env
+Dockerfile
 
 ### IntelliJ IDEA ###
 .idea/modules.xml

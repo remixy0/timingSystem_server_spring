@@ -80,7 +80,7 @@ public class RegisteredUsersForVerificationRepository {
             helper.setTo(to);
             helper.setSubject(subject);
 
-            String baseUrl = "http://localhost:8080";
+            String baseUrl = "https://blresults.pl";
 
             String htmlContent = """
             <!DOCTYPE html>

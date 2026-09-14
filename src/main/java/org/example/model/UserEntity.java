@@ -26,11 +26,11 @@ public class UserEntity {
 
     private byte[] photo;
 
-    @ElementCollection(fetch = FetchType.LAZY)
+    @ElementCollection(fetch = FetchType.EAGER)
     @Column(name = "coach_usernames")
     private List<UserEntity> coaches = new ArrayList<>();
 
-    @ElementCollection(fetch = FetchType.LAZY)
+    @ElementCollection(fetch = FetchType.EAGER)
     @Column(name = "athletes_usernames")
     private List<UserEntity> coachingAthletes = new ArrayList<>();
 

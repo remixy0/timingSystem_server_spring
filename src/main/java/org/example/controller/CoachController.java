@@ -5,6 +5,7 @@ import org.example.model.DTOs.EffortDTO;
 import org.example.model.DTOs.EffortDTOmini;
 import org.example.model.DTOs.UserData;
 import org.example.model.UserEntity;
+import org.example.repository.CoachVerifyRequestRepository;
 import org.example.service.Service;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -23,9 +24,11 @@ import java.util.Map;
 @CrossOrigin(origins = "http://localhost:5173")
 public class CoachController {
     private final Service service;
+    private final CoachVerifyRequestRepository coachVerifyRequestRepository;
 
-    public CoachController(Service service) {
+    public CoachController(Service service, CoachVerifyRequestRepository coachVerifyRequestRepository) {
         this.service = service ;
+        this.coachVerifyRequestRepository = coachVerifyRequestRepository;
     }
 
     private String getCurrentUserId() {
@@ -47,19 +50,15 @@ public class CoachController {
 
         if(user.equals(coach)) {return ResponseEntity.badRequest().body(Map.of("message", "You cant coach yourself"));}
 
-        if (!service.doesUserExist(coachUsername)){return ResponseEntity.badRequest().body(Map.of("message", "User doesn't exist"));}
+        if (!service.doesUserExist(coachUsername)){return ResponseEntity.badRequest().body(Map.of("message", "Cannot send request."));}
 
         if(user.getCoaches().contains(coachUsername)){
             return ResponseEntity.badRequest().body(Map.of("message", "Coach already exist"));
         }
 
-        user.addCoach(coach);
-        coach.addCoachingAthlete(user);
+        coachVerifyRequestRepository.addCoachRequest(user, coach);
 
-        service.saveUser(user);
-        service.saveUser(coach);
-
-        return ResponseEntity.ok(Map.of("message", "Added successfully!"));
+        return ResponseEntity.ok(Map.of("message", "Sent coaching request!"));
     }
 
     @Operation(
@@ -77,7 +76,7 @@ public class CoachController {
 
         if(coach == null) return ResponseEntity.badRequest().body(Map.of("message", "Coach doesn't exist"));
 
-        if(!user.getCoaches().contains(coachUsername)){
+        if(!user.getCoaches().contains(coach)){
             return ResponseEntity.badRequest().body(Map.of("message", "Coach doesn't exist"));
         }
 

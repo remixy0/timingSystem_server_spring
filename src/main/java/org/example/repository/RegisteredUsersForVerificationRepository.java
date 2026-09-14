@@ -29,6 +29,7 @@ public class RegisteredUsersForVerificationRepository {
     }
 
     public UserEntity verifyUser(int code){
+        if (code < 100000 || code > 999999) {return null;}
         UserEntity user = this.users.get(code);
         this.users.remove(code);
         return user;
@@ -80,7 +81,8 @@ public class RegisteredUsersForVerificationRepository {
             helper.setTo(to);
             helper.setSubject(subject);
 
-            String baseUrl = "https://blresults.pl";
+//            String baseUrl = "https://blresults.pl";
+            String baseUrl = "http://localhost:8080";
 
             String htmlContent = """
             <!DOCTYPE html>
@@ -94,7 +96,7 @@ public class RegisteredUsersForVerificationRepository {
                         </p>
                         
                         <div style="text-align: center; margin: 35px 0;">
-                            <a href="%s/api/verify?code=%s" 
+                            <a href="%s/api/verify/user?code=%s" 
                                style="background-color: #2b66ff; color: #ffffff; padding: 14px 32px; text-decoration: none; border-radius: 8px; font-weight: 600; font-size: 15px; display: inline-block;">
                                 Verify Account
                             </a>

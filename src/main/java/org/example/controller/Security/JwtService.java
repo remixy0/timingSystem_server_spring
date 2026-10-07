@@ -2,49 +2,58 @@ package org.example.controller.Security;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
-import java.security.Key;
+
+import javax.crypto.SecretKey;
+import java.nio.charset.StandardCharsets;
 import java.util.Date;
+import java.util.Optional;
 
 @Component
 public class JwtService {
 
-    private final String SECRET;
-    private final Key key;
+    /** Name of the claim holding the user's token version (see TokenVersionService). */
+    private static final String VERSION_CLAIM = "ver";
 
-    public JwtService(@Value("${app.secret-key}") String secret) {
-        this.SECRET = secret;
-        this.key = Keys.hmacShaKeyFor(SECRET.getBytes());
+    private final SecretKey key;
+    private final long expirationMillis;
+
+    public JwtService(@Value("${app.secret-key}") String secret,
+                      @Value("${app.jwt.expiration-hours:12}") long expirationHours) {
+        this.key = Keys.hmacShaKeyFor(secret.getBytes(StandardCharsets.UTF_8));
+        this.expirationMillis = expirationHours * 60 * 60 * 1000;
     }
 
-    public String generateToken(String username) {
+    /** What a valid token says: who it belongs to and which token version it was issued with. */
+    public record TokenData(String username, int version) {}
+
+    public String generateToken(String username, int tokenVersion) {
+        long now = System.currentTimeMillis();
         return Jwts.builder()
-                .setSubject(username)
-                .setIssuedAt(new Date(System.currentTimeMillis()))
-                .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60)) // Ważny 12h
-                .signWith(key, SignatureAlgorithm.HS256)
+                .subject(username)
+                .claim(VERSION_CLAIM, tokenVersion)
+                .issuedAt(new Date(now))
+                .expiration(new Date(now + expirationMillis))
+                .signWith(key, Jwts.SIG.HS256)
                 .compact();
     }
 
-
-    public String extractUsername(String token) {
-        return Jwts.parserBuilder()
-                .setSigningKey(key)
-                .build()
-                .parseClaimsJws(token)
-                .getBody()
-                .getSubject();
-    }
-
-    public boolean isTokenValid(String token) {
+    /** Checks signature and expiry. Empty if the token is invalid in any way. */
+    public Optional<TokenData> parse(String token) {
         try {
-            Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token);
-            return true;
+            Claims claims = Jwts.parser()
+                    .verifyWith(key)
+                    .build()
+                    .parseSignedClaims(token)
+                    .getPayload();
+            if (claims.getSubject() == null) return Optional.empty();
+            // Tokens issued before versions existed have no claim - they count as version 0
+            Integer version = claims.get(VERSION_CLAIM, Integer.class);
+            return Optional.of(new TokenData(claims.getSubject(), version == null ? 0 : version));
         } catch (Exception e) {
-            return false;
+            return Optional.empty();
         }
     }
 }

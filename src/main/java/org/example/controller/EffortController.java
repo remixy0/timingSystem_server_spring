@@ -4,7 +4,10 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import org.example.model.DTOs.EffortDTO;
 import org.example.model.DTOs.EffortDTOmini;
 import org.example.model.Effort;
+import org.example.model.UserEntity;
+import org.example.repository.UserRepository;
 import org.example.service.Service;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -17,17 +20,17 @@ import java.util.UUID;
 @RestController
 @RequestMapping("/api")
 @Tag(name = "Efforts")
-@CrossOrigin(origins = "http://localhost:5173")
 public class EffortController {
     private final Service service;
+    private final UserRepository userRepository;
 
-    public EffortController(Service service) {
+    public EffortController(Service service, UserRepository userRepository) {
         this.service = service ;
+        this.userRepository =  userRepository;
     }
 
     private String getCurrentUserId() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        System.out.println(authentication.getName());
         return authentication.getName();
     }
 
@@ -53,9 +56,22 @@ public class EffortController {
             summary = "returns effort DTO with given ID"
     )
     @GetMapping("/get-effort-dto-with-id")
-    public EffortDTO getEffortDTO(@RequestParam UUID effortId) {
+    public ResponseEntity<EffortDTO> getEffortDTO(@RequestParam UUID effortId, @RequestParam String ownerId) {
+        String parameter;
         String userId = getCurrentUserId();
-        return service.getEffortById(effortId, userId);
+        UserEntity currentuser = userRepository.findByUsername(userId).get();
+
+        if (ownerId.equals("s")) {
+            parameter = userId;
+        } else {
+            UserEntity owner = userRepository.findByUsername(ownerId).get();
+            if (!owner.isCoach(currentuser)) {
+                return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+            }
+            parameter = ownerId;
+        }
+
+        return ResponseEntity.ok(service.getEffortById(effortId, parameter));
     }
 
     @Operation(
@@ -95,6 +111,9 @@ public class EffortController {
     @PostMapping("/add-efforts")
     public ResponseEntity<?> addListOfEfforts(@RequestBody List<Effort> efforts) {
         String userId = getCurrentUserId();
+        if (efforts == null || efforts.size() > AthleteController.MAX_BATCH_SIZE) {
+            return ResponseEntity.badRequest().body(Map.of("message", "Too many efforts in one request (max " + AthleteController.MAX_BATCH_SIZE + ")."));
+        }
 
         efforts.stream().forEach(effort -> {
             effort.setOwnerId(userId);

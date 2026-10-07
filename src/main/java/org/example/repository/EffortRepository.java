@@ -9,5 +9,7 @@ import java.util.UUID;
 @Repository
 public interface EffortRepository extends JpaRepository<Effort, UUID> {
     List<Effort> findAllByOwnerId(String ownerId);
+
+    List<Effort> findAllByAthleteId(UUID athleteId);
 }
 

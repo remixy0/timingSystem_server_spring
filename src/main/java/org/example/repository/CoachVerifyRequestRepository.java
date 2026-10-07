@@ -4,50 +4,58 @@ import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 import org.example.model.DTOs.AddCoachRequest;
 import org.example.model.UserEntity;
-import org.springframework.mail.MailSender;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
+import org.springframework.web.util.HtmlUtils;
 
-import java.util.HashMap;
-import java.util.Random;
+import java.time.Duration;
+import java.util.Optional;
 
 @Service
 public class CoachVerifyRequestRepository {
-    private HashMap<Integer, AddCoachRequest> requests;
-    private JavaMailSender mailSender;
-    private Random random;
+    /** How long a coach has to accept a request. */
+    private static final Duration LINK_VALID_FOR = Duration.ofDays(7);
+    /** Upper limit of open coach requests at the same time (protects memory). */
+    private static final int MAX_PENDING = 10_000;
+
+    private final PendingTokenStore<AddCoachRequest> requests = new PendingTokenStore<>(LINK_VALID_FOR, MAX_PENDING);
+    private final JavaMailSender mailSender;
+
+    @Value("${app.base.url}")
+    private String baseUrl;
 
     public CoachVerifyRequestRepository(JavaMailSender mailSender) {
         this.mailSender = mailSender;
-        this.random = new Random();
-        this.requests = new HashMap<>();
     }
 
-    public void addCoachRequest(UserEntity user, UserEntity coach) {
-        int verificationCode = this.random.nextInt(100000,999999);
-        requests.put(verificationCode,new AddCoachRequest(user,coach));
-        this.sendCoachVerificationEmail(coach.getEmail(), user.getUsername(),  verificationCode);
+    /** @return false if too many requests are open right now (nothing is sent). */
+    public boolean addCoachRequest(UserEntity user, UserEntity coach) {
+        Optional<String> token = requests.add(new AddCoachRequest(user, coach));
+        if (token.isEmpty()) return false;
+        this.sendCoachVerificationEmail(coach.getEmail(), user.getUsername(), token.get());
+        return true;
     }
 
-    public AddCoachRequest verifyUser(int verificationCode) {
-        if (verificationCode < 100000 || verificationCode > 999999) {return null;}
-        AddCoachRequest coachRequest = this.requests.get(verificationCode);
-        this.requests.remove(verificationCode);
-        return coachRequest;
+    /** Returns the request for a valid, unused, unexpired link token - otherwise null. Each token works once. */
+    public AddCoachRequest verifyUser(String token) {
+        return requests.take(token);
     }
 
-    private void sendCoachVerificationEmail(String to, String username, int code) {
+    private void sendCoachVerificationEmail(String to, String username, String code) {
         MimeMessage message = mailSender.createMimeMessage();
-        String subject = "Coaching request from " + username + " | on BLResults platform";
+        String subject = "Coaching request from " + username.replaceAll("[\\r\\n]", " ") + " | on BLResults platform";
 
         try {
             MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
             helper.setTo(to);
             helper.setSubject(subject);
 
+
+
 //            String baseUrl = "https://blresults.pl";
-            String baseUrl = "http://localhost:8080";
+
 
             String htmlContent = """
             <!DOCTYPE html>
@@ -76,7 +84,7 @@ public class CoachVerifyRequestRepository {
                 </div>
             </body>
             </html>
-            """.formatted(username, baseUrl, code);
+            """.formatted(HtmlUtils.htmlEscape(username), baseUrl, code); // escape: usernames could contain HTML
 
             helper.setText(htmlContent, true);
             mailSender.send(message);

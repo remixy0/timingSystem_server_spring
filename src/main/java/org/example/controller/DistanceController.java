@@ -13,7 +13,6 @@ import java.util.Map;
 @RestController
 @RequestMapping("/api")
 @Tag(name = "Distances")
-@CrossOrigin(origins = "http://localhost:5173")
 public class DistanceController {
     private final Service service;
 
@@ -45,6 +44,9 @@ public class DistanceController {
     @PostMapping("/add-distances")
     public ResponseEntity<?> addNewAthlete(@RequestBody List<Distance> distances) {
         String userId = getCurrentUserId();
+        if (distances == null || distances.size() > AthleteController.MAX_BATCH_SIZE) {
+            return ResponseEntity.badRequest().body(Map.of("message", "Too many distances in one request (max " + AthleteController.MAX_BATCH_SIZE + ")."));
+        }
 
         distances.stream().forEach(distance -> {
             distance.setOwnerId(userId);

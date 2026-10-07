@@ -121,7 +121,6 @@ public class Effort {
 
     public int getLapBarWidth(double currentLap){
         int barWidth = (int) (getFastestLap() * 100/ currentLap);
-        System.out.println(barWidth);
         return barWidth;
 
     }

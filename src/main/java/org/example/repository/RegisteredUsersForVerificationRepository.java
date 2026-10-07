@@ -3,76 +3,72 @@ package org.example.repository;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 import org.example.model.UserEntity;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.util.HtmlUtils;
 
-import java.util.*;
+import java.time.Duration;
+import java.util.Optional;
 
 @Service
 public class RegisteredUsersForVerificationRepository {
-    private Map<Integer,UserEntity> users;
+    /** How long a "verify your e-mail" link works. */
+    private static final Duration LINK_VALID_FOR = Duration.ofHours(24);
+    /** Upper limit of accounts waiting for verification at the same time (protects memory). */
+    private static final int MAX_PENDING = 10_000;
+
+    private final PendingTokenStore<UserEntity> pending = new PendingTokenStore<>(LINK_VALID_FOR, MAX_PENDING);
     private final JavaMailSender mailSender;
-    private Random random;
+    @Value("${app.base.url}")
+    private String baseUrl;
 
     public RegisteredUsersForVerificationRepository(JavaMailSender mailSender){
-        this.users = new HashMap<>();
         this.mailSender = mailSender;
-        this.random = new Random();
     }
 
-    public void registerUserForVerification(UserEntity user){
-        int userCode = this.random.nextInt(100000,999999);
-        this.users.put(userCode,user);
-        this.sendVerificationEmail(user.getEmail(), user.getUsername(), userCode);
+    /** @return false if too many registrations are waiting right now (nothing is sent). */
+    public boolean registerUserForVerification(UserEntity user){
+        Optional<String> token = pending.add(user);
+        if (token.isEmpty()) return false;
+        this.sendVerificationEmail(user.getEmail(), user.getUsername(), token.get());
+        return true;
     }
 
-    public UserEntity verifyUser(int code){
-        if (code < 100000 || code > 999999) {return null;}
-        UserEntity user = this.users.get(code);
-        this.users.remove(code);
-        return user;
+    public Optional<UserEntity> findPendingUser(String username) {
+        if (username == null) return Optional.empty();
+        return pending.find(user -> username.equals(user.getUsername()));
+    }
+
+    /** Returns the user for a valid, unused, unexpired link token - otherwise null. Each token works once. */
+    public UserEntity verifyUser(String token){
+        return pending.take(token);
     }
 
     public boolean resendVerificationCode(String username) {
         if (username == null) return false;
 
-        Optional<Map.Entry<Integer, UserEntity>> entryOpt = this.users.entrySet().stream()
-                .filter(entry -> username.equals(entry.getValue().getUsername()))
-                .findFirst();
+        Optional<PendingTokenStore.Issued<UserEntity>> issued =
+                pending.reissue(user -> username.equals(user.getUsername()));
+        if (issued.isEmpty()) return false;
 
-        if (entryOpt.isEmpty()) return false;
-
-        Map.Entry<Integer, UserEntity> entry = entryOpt.get();
-        Integer oldCode = entry.getKey();
-        UserEntity user = entry.getValue();
-
-        this.users.remove(oldCode);
-
-        int newCode = this.random.nextInt(100000, 999999);
-        this.users.put(newCode, user);
-
-        this.sendVerificationEmail(user.getEmail(), user.getUsername(), newCode);
-
+        UserEntity user = issued.get().value();
+        this.sendVerificationEmail(user.getEmail(), user.getUsername(), issued.get().token());
         return true;
     }
 
     public boolean isUserRegisteredForVerification(String username) {
         if (username == null) return false;
-
-        return this.users.values().stream()
-                .anyMatch(user -> username.equals(user.getUsername()));
+        return pending.contains(user -> username.equals(user.getUsername()));
     }
 
     public boolean isEmailRegisteredForVerification(String email) {
         if (email == null) return false;
-
-        return this.users.values().stream()
-                .anyMatch(user -> email.equals(user.getEmail()));
+        return pending.contains(user -> email.equalsIgnoreCase(user.getEmail()));
     }
 
-    private void sendVerificationEmail(String to, String userName, int code) {
+    private void sendVerificationEmail(String to, String userName, String code) {
         MimeMessage message = mailSender.createMimeMessage();
         String subject = "Verification Email for BLTiming";
 
@@ -82,7 +78,7 @@ public class RegisteredUsersForVerificationRepository {
             helper.setSubject(subject);
 
 //            String baseUrl = "https://blresults.pl";
-            String baseUrl = "http://localhost:8080";
+
 
             String htmlContent = """
             <!DOCTYPE html>
@@ -111,7 +107,7 @@ public class RegisteredUsersForVerificationRepository {
                 </div>
             </body>
             </html>
-            """.formatted(userName, baseUrl, code);
+            """.formatted(HtmlUtils.htmlEscape(userName), baseUrl, code); // escape: usernames could contain HTML
 
             helper.setText(htmlContent, true);
             mailSender.send(message);

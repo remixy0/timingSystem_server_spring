@@ -1,6 +1,7 @@
 package org.example.controller.WebSockets;
 
 import org.example.controller.Security.JwtService;
+import org.example.controller.Security.TokenVersionService;
 import org.springframework.messaging.Message;
 import org.springframework.messaging.MessageChannel;
 import org.springframework.messaging.simp.stomp.StompCommand;
@@ -16,9 +17,11 @@ import java.util.Collections;
 public class WebSocketAuthInterceptor implements ChannelInterceptor {
 
     private final JwtService jwtService;
+    private final TokenVersionService tokenVersionService;
 
-    public WebSocketAuthInterceptor(JwtService jwtService) {
+    public WebSocketAuthInterceptor(JwtService jwtService, TokenVersionService tokenVersionService) {
         this.jwtService = jwtService;
+        this.tokenVersionService = tokenVersionService;
     }
 
     @Override
@@ -29,16 +32,10 @@ public class WebSocketAuthInterceptor implements ChannelInterceptor {
             String authHeader = accessor.getFirstNativeHeader("Authorization");
 
             if (authHeader != null && authHeader.startsWith("Bearer ")) {
-                String token = authHeader.substring(7);
-
-                if (jwtService.isTokenValid(token)) {
-                    String username = jwtService.extractUsername(token);
-
-                    UsernamePasswordAuthenticationToken auth =
-                            new UsernamePasswordAuthenticationToken(username, null, Collections.emptyList());
-
-                    accessor.setUser(auth);
-                }
+                jwtService.parse(authHeader.substring(7))
+                        .filter(token -> tokenVersionService.isCurrent(token.username(), token.version()))
+                        .ifPresent(token -> accessor.setUser(
+                                new UsernamePasswordAuthenticationToken(token.username(), null, Collections.emptyList())));
             }
         }
         return message;

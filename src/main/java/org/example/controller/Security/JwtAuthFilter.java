@@ -15,9 +15,11 @@ import java.util.Collections;
 public class JwtAuthFilter extends OncePerRequestFilter {
 
     private final JwtService jwtService;
+    private final TokenVersionService tokenVersionService;
 
-    public JwtAuthFilter(JwtService jwtService) {
+    public JwtAuthFilter(JwtService jwtService, TokenVersionService tokenVersionService) {
         this.jwtService = jwtService;
+        this.tokenVersionService = tokenVersionService;
     }
 
     @Override
@@ -26,25 +28,17 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 
         final String authHeader = request.getHeader("Authorization");
 
-        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+        if (authHeader == null || !authHeader.startsWith("Bearer ")
+                || SecurityContextHolder.getContext().getAuthentication() != null) {
             filterChain.doFilter(request, response);
             return;
         }
 
-        final String jwt = authHeader.substring(7);
-
-        try {
-            if (jwtService.isTokenValid(jwt) && SecurityContextHolder.getContext().getAuthentication() == null) {
-                String username = jwtService.extractUsername(jwt);
-
-                UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
-                        username, null, Collections.emptyList()
-                );
-
-                SecurityContextHolder.getContext().setAuthentication(authToken);
-            }
-        } catch (Exception e) {
-        }
+        jwtService.parse(authHeader.substring(7))
+                // Rejects revoked tokens ("log out on all devices") and tokens of deleted users
+                .filter(token -> tokenVersionService.isCurrent(token.username(), token.version()))
+                .ifPresent(token -> SecurityContextHolder.getContext().setAuthentication(
+                        new UsernamePasswordAuthenticationToken(token.username(), null, Collections.emptyList())));
 
         filterChain.doFilter(request, response);
     }

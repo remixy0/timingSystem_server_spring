@@ -1,0 +1,70 @@
+package org.example.controller;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import org.example.model.Distance;
+import org.example.service.Service;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.web.bind.annotation.*;
+import java.util.List;
+import java.util.Map;
+
+@RestController
+@RequestMapping("/api")
+@Tag(name = "Distances")
+public class DistanceController {
+    private final Service service;
+
+    public DistanceController(Service service) {
+        this.service = service ;
+    }
+
+    private String getCurrentUserId() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        return authentication.getName();
+    }
+
+    @Operation(
+            summary = "adds Distance"
+    )
+    @PostMapping("/add-distance")
+    public ResponseEntity<?> addNewAthlete(@RequestBody Distance distance) {
+        String userId = getCurrentUserId();
+
+        distance.setOwnerId(userId);
+        service.addDistance(distance);
+
+        return ResponseEntity.ok(Map.of("message", "Added successfully!"));
+    }
+
+    @Operation(
+            summary = "adds list of Distances"
+    )
+    @PostMapping("/add-distances")
+    public ResponseEntity<?> addNewAthlete(@RequestBody List<Distance> distances) {
+        String userId = getCurrentUserId();
+        if (distances == null || distances.size() > AthleteController.MAX_BATCH_SIZE) {
+            return ResponseEntity.badRequest().body(Map.of("message", "Too many distances in one request (max " + AthleteController.MAX_BATCH_SIZE + ")."));
+        }
+
+        distances.stream().forEach(distance -> {
+            distance.setOwnerId(userId);
+            service.addDistance(distance);
+        });
+        return ResponseEntity.ok(Map.of("message", "Added successfully!"));
+    }
+
+    @Operation(
+            summary = "returns list of Distances"
+    )
+    @GetMapping("/get-distances")
+    public List<Distance> getDistances() {
+        String userId = getCurrentUserId();
+
+        return service.getDistancesForUser(userId);
+    }
+
+}
+
+

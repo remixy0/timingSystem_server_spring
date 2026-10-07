@@ -1,24 +1,67 @@
 package org.example.model;
-
-import java.time.LocalDate;
+import jakarta.persistence.Entity;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import lombok.Getter;
+import lombok.Setter;
+import jakarta.persistence.Id;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+@Getter
+@Setter
+@Entity
 public class Effort {
-
-    UUID Id;
-    String athlete;
-    String distance;
+    @Id
+    UUID id;
+    UUID athleteId;
+    UUID distanceId;
     Double totalTime;
     List<Double>  lapTimes;
-    int distanceInMeters;
-    LocalDate date;
+    String date;
+    boolean show;
 
-    public Effort(String athlete, String distance,Double totalTime, List<Double> lapTimes,int distanceInMeters) {
-        this.Id = UUID.randomUUID();
-        this.athlete = athlete;
-        this.distance = distance;
+    private String ownerId;
+
+    public void setId(UUID id) {
+        this.id = id;
+    }
+
+    public void setAthleteId(UUID athleteId) {
+        this.athleteId = athleteId;
+    }
+
+    public void setTotalTime(Double totalTime) {
+        this.totalTime = totalTime;
+    }
+
+    public void setDistanceId(UUID distanceId) {
+        this.distanceId = distanceId;
+    }
+
+    public void setLapTimes(List<Double> lapTimes) {
+        this.lapTimes = lapTimes;
+    }
+
+    public void setDate(String date) {
+        this.date = date;
+    }
+
+    public boolean isShow() {
+        return show;
+    }
+
+    public void setShow(boolean show) {
+        this.show = show;
+    }
+
+    public Effort() {}
+
+    public Effort(UUID id,UUID athleteId, UUID distanceId,Double totalTime, List<Double> lapTimes, String date, boolean show) {
+        this.id = id;
+        this.athleteId = athleteId;
+        this.distanceId = distanceId;
         this.totalTime = totalTime;
         if(lapTimes == null){
             this.lapTimes = new ArrayList<>();
@@ -26,20 +69,17 @@ public class Effort {
         }else{
             this.lapTimes = lapTimes;
         }
-        this.distanceInMeters = distanceInMeters;
-        this.date = LocalDate.now();
-        System.out.println(athlete + " " + distance + " " + totalTime + " " + lapTimes + " " + distanceInMeters);
+        this.date = date;
+        this.show = show;
     }
 
-    private int distanceInMeters(){
-        String var = "";
-        for(int i=0;i<distance.length();i++){
-            char c = distance.charAt(i);
-            if(Character.isDigit(c)){
-                var += c;
-            }
-        }
-        return Integer.parseInt(var);
+
+    public UUID getId() {
+        return id;
+    }
+
+    public UUID getAthleteId() {
+        return athleteId;
     }
 
     public List<Double> getLapTimes(){
@@ -47,15 +87,11 @@ public class Effort {
     }
 
     public String getDate(){
-        return date.toString();
+        return this.date;
     }
 
-    public String getAthlete() {
-        return athlete;
-    }
-
-    public String getDistance() {
-        return distance;
+    public UUID getDistanceId() {
+        return distanceId;
     }
 
     public Double getTotalTime() {
@@ -82,15 +118,9 @@ public class Effort {
                 .orElse(0.0);
     }
 
-    public Double calculateSpeed(){
-        var number = (double) Math.round(distanceInMeters() * 360 / totalTime.doubleValue());
-        number = number/100;
-        return number;
-    }
 
     public int getLapBarWidth(double currentLap){
         int barWidth = (int) (getFastestLap() * 100/ currentLap);
-        System.out.println(barWidth);
         return barWidth;
 
     }
